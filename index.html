@@ -259,7 +259,7 @@ body {
 .banner-value { font-size: 14px; color: var(--text); font-weight: 500; }
 .countdown {
   font-family: 'DM Mono', monospace;
-  font-size: 22px; color: var(--pk-pink); font-weight: 500;
+  font-size: 22px; color: var(--text); font-weight: 700;
   letter-spacing: 0.06em;
 }
 
@@ -277,7 +277,7 @@ body {
 }
 .stat-value { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
 .stat-sub { font-size: 13px; color: var(--muted); }
-.stat-pink { color: var(--pk-pink); }
+.stat-pink { color: var(--text); }
 .stat-green { color: var(--green); }
 
 /* ─── TWO COL ─────────────────────────────────────────── */
@@ -311,7 +311,7 @@ body {
 }
 .bene-name  { font-size: 14px; font-weight: 500; color: var(--text); }
 .bene-addr  { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
-.bene-share { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--pk-pink); font-weight: 500; }
+.bene-share { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--text); font-weight: 600; }
 
 /* ─── ASSET ROW ───────────────────────────────────────── */
 .asset-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
@@ -849,7 +849,7 @@ select.form-input { cursor: pointer; }
         <div class="prog-track"><div class="prog-fill" id="hbProgFill" style="width:0%;"></div></div>
         <div style="display:flex;justify-content:space-between;margin-top:7px;">
           <span style="font-size:12px;color:var(--muted);" id="hbElapsed">...</span>
-          <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pk-pink);" id="hbLeft">...</span>
+          <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green);" id="hbLeft">...</span>
         </div>
       </div>
 
@@ -882,7 +882,7 @@ select.form-input { cursor: pointer; }
         </div>
         <div style="padding-top:12px;margin-top:4px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
           <span style="font-size:12px;color:var(--muted);">Vault balance</span>
-          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--pk-pink);" id="assetBalanceLarge">0.0000 PAS</span>
+          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--text);" id="assetBalanceLarge">0.0000 PAS</span>
         </div>
       </div>
 
@@ -981,7 +981,7 @@ select.form-input { cursor: pointer; }
             <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Beneficiaries</span><span id="reviewBenes">...</span></div>
             <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Interval</span><span id="reviewInterval">...</span></div>
             <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Grace period</span><span id="reviewGrace">...</span></div>
-            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Initial deposit</span><span id="reviewDeposit" style="color:var(--pk-pink);">0.000 PAS</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Initial deposit</span><span id="reviewDeposit" style="color:var(--text);">0.000 PAS</span></div>
             <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Network</span><span style="color:var(--pk-pink);">Polkadot Hub TestNet</span></div>
           </div>
         </div>
@@ -1166,7 +1166,7 @@ select.form-input { cursor: pointer; }
       <button class="mclose" onclick="closeM('depositModal')">✕</button>
     </div>
     <div style="background:var(--pink-dim);border:0.5px solid var(--border-pink);border-radius:8px;padding:14px;margin-bottom:18px;">
-      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pk-pink);letter-spacing:.1em;margin-bottom:5px;">WHAT THIS DOES</div>
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.1em;margin-bottom:5px;">WHAT THIS DOES</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.6;">Locks PAS tokens into your will vault. These tokens will be distributed to your beneficiaries when the will triggers.</div>
     </div>
     <div class="form-group" style="margin-bottom:18px;">
@@ -1702,7 +1702,7 @@ function renderBeneficiaries(wallets, shares, labels, claimed, totalBalance) {
   }
   if (distLabels) {
     distLabels.innerHTML = wallets.map((w, i) =>
-      `<span style="font-family:'DM Mono',monospace;font-size:12px;color:${colors[i%colors.length]};">${labels[i]||w.slice(0,6)} · ${(totalBalance * Number(shares[i]) / 10000).toFixed(4)} PAS</span>`
+      `<span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">${labels[i]||w.slice(0,6)} <span style="color:var(--text);font-weight:500;">${(totalBalance * Number(shares[i]) / 10000).toFixed(4)} PAS</span></span>`
     ).join('');
   }
 }
@@ -2135,7 +2135,7 @@ function addB() {
   ch.dataset.addr  = a;
   ch.dataset.share = s;
   ch.dataset.label = l;
-  ch.innerHTML = `${l} · ${sa} <span style="color:var(--pk-pink);">${s}%</span> <span class="chip-x" onclick="this.parentElement.remove()">×</span>`;
+  ch.innerHTML = `${l} · ${sa} <span style="color:var(--text);">${s}%</span> <span class="chip-x" onclick="this.parentElement.remove()">×</span>`;
   document.getElementById('bChips').appendChild(ch);
   document.getElementById('bAddr').value = '';
   document.getElementById('bShare').value = '';
