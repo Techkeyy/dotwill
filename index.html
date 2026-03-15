@@ -1102,6 +1102,63 @@ select.form-input { cursor: pointer; }
   </div>
 </div>
 
+<script type="module">
+import { createAppKit } from 'https://esm.sh/@reown/appkit@1.6.8';
+import { EthersAdapter } from 'https://esm.sh/@reown/appkit-adapter-ethers@1.6.8';
+import { defineChain } from 'https://esm.sh/@reown/appkit@1.6.8/networks';
+
+const polkadotTestnet = defineChain({
+  id: 420420417,
+  caipNetworkId: 'eip155:420420417',
+  chainNamespace: 'eip155',
+  name: 'Polkadot Hub TestNet',
+  nativeCurrency: { name: 'PAS', symbol: 'PAS', decimals: 18 },
+  rpcUrls: { default: { http: ['https://eth-rpc-testnet.polkadot.io/'] } },
+  blockExplorers: { default: { name: 'Blockscout', url: 'https://blockscout-testnet.polkadot.io' } },
+});
+
+const projectId = '9d791d21dd1c9df824fb1ec11b59ba67';
+
+const metadata = {
+  name: 'DotWill',
+  description: 'On-chain inheritance on Polkadot Hub',
+  url: 'https://dotwill.vercel.app',
+  icons: ['https://dotwill.vercel.app/favicon.ico']
+};
+
+const ethersAdapter = new EthersAdapter();
+
+const modal = createAppKit({
+  adapters: [ethersAdapter],
+  networks: [polkadotTestnet],
+  defaultNetwork: polkadotTestnet,
+  metadata,
+  projectId,
+  features: { analytics: false, email: false, socials: false },
+  themeMode: 'dark',
+  themeVariables: {
+    '--w3m-accent': '#E6007A',
+    '--w3m-border-radius-master': '8px',
+    '--w3m-font-family': 'DM Sans, sans-serif',
+  }
+});
+
+// Expose modal globally so non-module script can use it
+window._appKitModal = modal;
+
+// Listen for connection events
+modal.subscribeAccount(async (account) => {
+  if (account.isConnected && account.address) {
+    window._onWalletConnected(account.address);
+  } else {
+    window._onWalletDisconnected();
+  }
+});
+
+// Expose open/disconnect for buttons
+window._openWalletModal    = () => modal.open();
+window._disconnectAppKit   = () => modal.disconnect();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.1/ethers.umd.min.js"></script>
 <script>
 // ─── CONFIG ────────────────────────────────────────────────────────────────
@@ -1237,69 +1294,98 @@ function showPage(id, el) {
   closeSidebarOnMobile();
 }
 
-// ─── WALLET CONNECT ────────────────────────────────────────────────────────
-async function connectWallet() {
-  if (typeof window.ethereum === 'undefined') {
-    alert('MetaMask not found!\n\nInstall MetaMask then we\'ll automatically add the Polkadot Hub TestNet for you.');
-    return;
+// ─── WALLET CONNECT (Web3Modal) ────────────────────────────────────────────
+function connectWallet() {
+  if (window._openWalletModal) {
+    window._openWalletModal();
+  } else {
+    // Fallback if module hasn't loaded yet
+    setTimeout(() => { if (window._openWalletModal) window._openWalletModal(); }, 500);
   }
+}
+
+// Called by AppKit when wallet connects
+window._onWalletConnected = async function(address) {
   try {
-    // Revoke existing permissions first, then request fresh
-    // This forces MetaMask to show the account picker every single time
-    try {
-      await window.ethereum.request({
-        method: 'wallet_revokePermissions',
-        params: [{ eth_accounts: {} }]
-      });
-    } catch(e) {
-      // wallet_revokePermissions not supported on all versions — ignore
-    }
-
-    // Now request fresh — always shows account picker
-    await window.ethereum.request({
-      method: 'wallet_requestPermissions',
-      params: [{ eth_accounts: {} }]
-    });
-
-    provider      = new ethers.BrowserProvider(window.ethereum);
-    await provider.send('eth_requestAccounts', []);
-    signer        = await provider.getSigner();
-    walletAddress = await signer.getAddress();
+    // Build ethers provider from window.ethereum (injected by chosen wallet)
+    provider        = new ethers.BrowserProvider(window.ethereum);
+    signer          = await provider.getSigner();
+    walletAddress   = await signer.getAddress();
     factoryContract = new ethers.Contract(FACTORY_ADDRESS, FACTORY_ABI, signer);
     walletConnected = true;
 
-    // Auto-add or switch to Polkadot Hub TestNet
-    await switchNetwork();
     await checkNetwork();
 
     const short = walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);
     document.getElementById('wpAddr').textContent    = short;
     document.getElementById('wpStatus').textContent  = 'Connected';
     document.getElementById('wpLed').classList.add('live');
-
-    // Wallet pill now does nothing on click (already connected)
-    document.getElementById('walletPill').onclick = null;
-
-    // Show disconnect button
+    document.getElementById('walletPill').onclick    = null;
     document.getElementById('disconnectBtn').style.display = 'block';
 
-    // Update topbar connect button
     const connectBtn = document.getElementById('connectBtn');
     connectBtn.textContent = short;
     connectBtn.style.color = 'var(--green)';
-    connectBtn.onclick     = null; // disable re-clicking
+    connectBtn.onclick     = () => window._openWalletModal();
 
     await fetchWalletBalance();
     await checkUserWill();
 
-    // Listen for network/account changes
+    window.ethereum.on('chainChanged', () => { checkNetwork(); fetchWalletBalance(); });
     window.ethereum.on('accountsChanged', () => window.location.reload());
-    window.ethereum.on('chainChanged',    () => { checkNetwork(); fetchWalletBalance(); });
 
   } catch(e) {
     console.error(e);
-    showToast('Connection failed: ' + (e.message || e), true);
+    showToast('Wallet setup failed: ' + (e.message || e), true);
   }
+};
+
+// Called by AppKit when wallet disconnects
+window._onWalletDisconnected = function() {
+  if (!walletConnected) return; // already disconnected
+  _resetWalletState();
+};
+
+function _resetWalletState() {
+  walletConnected  = false;
+  walletAddress    = '';
+  provider         = null;
+  signer           = null;
+  factoryContract  = null;
+  willContract     = null;
+  readWill         = null;
+  userWillAddress  = null;
+  window._walletBalPAS = 0;
+
+  document.getElementById('wpAddr').textContent   = 'Connect wallet →';
+  document.getElementById('wpStatus').textContent = 'Not connected';
+  document.getElementById('wpLed').classList.remove('live');
+  document.getElementById('walletPill').onclick   = connectWallet;
+  document.getElementById('disconnectBtn').style.display = 'none';
+
+  const connectBtn = document.getElementById('connectBtn');
+  connectBtn.textContent = 'Connect Wallet';
+  connectBtn.style.color = '';
+  connectBtn.onclick     = connectWallet;
+
+  const balDot = document.getElementById('walletBalDot');
+  const balEl  = document.getElementById('walletBalDisplay');
+  if (balDot) balDot.style.display = 'none';
+  if (balEl)  balEl.style.display  = 'none';
+
+  const wrongBtn = document.getElementById('wrongNetworkBtn');
+  if (wrongBtn) wrongBtn.style.display = 'none';
+
+  const networkRow = document.getElementById('networkRow');
+  if (networkRow) networkRow.style.display = 'none';
+
+  showNoWillState();
+}
+
+function disconnectWallet() {
+  if (window._disconnectAppKit) window._disconnectAppKit();
+  _resetWalletState();
+  showToast('Wallet disconnected.');
 }
 
 // ─── CHECK IF USER HAS A WILL ──────────────────────────────────────────────
@@ -1737,59 +1823,6 @@ async function checkNetwork() {
   } catch(e) { console.error('checkNetwork error', e); }
 }
 
-function disconnectWallet() {
-  // Revoke MetaMask permissions so next connect shows account picker
-  if (typeof window.ethereum !== 'undefined') {
-    window.ethereum.request({
-      method: 'wallet_revokePermissions',
-      params: [{ eth_accounts: {} }]
-    }).catch(() => {}); // ignore if not supported
-  }
-
-  // Reset app state
-  walletConnected  = false;
-  walletAddress    = '';
-  provider         = null;
-  signer           = null;
-  factoryContract  = null;
-  willContract     = null;
-  readWill         = null;
-  userWillAddress  = null;
-  window._walletBalPAS = 0;
-
-  // Reset sidebar pill
-  document.getElementById('wpAddr').textContent   = 'Connect wallet →';
-  document.getElementById('wpStatus').textContent = 'Not connected';
-  document.getElementById('wpLed').classList.remove('live');
-  document.getElementById('walletPill').onclick   = connectWallet;
-
-  // Hide disconnect btn
-  document.getElementById('disconnectBtn').style.display = 'none';
-
-  // Reset topbar
-  const connectBtn = document.getElementById('connectBtn');
-  connectBtn.textContent  = 'Connect Wallet';
-  connectBtn.style.color  = '';
-  connectBtn.onclick      = connectWallet;
-
-  // Hide balance
-  const balDot = document.getElementById('walletBalDot');
-  const balEl  = document.getElementById('walletBalDisplay');
-  if (balDot) balDot.style.display = 'none';
-  if (balEl)  balEl.style.display  = 'none';
-
-  // Hide wrong network btn
-  const wrongBtn = document.getElementById('wrongNetworkBtn');
-  if (wrongBtn) wrongBtn.style.display = 'none';
-
-  // Hide network row
-  const networkRow = document.getElementById('networkRow');
-  if (networkRow) networkRow.style.display = 'none';
-
-  // Reset UI to no-will state
-  showNoWillState();
-  showToast('Wallet disconnected.');
-}
 
 // ─── WALLET BALANCE ────────────────────────────────────────────────────────
 async function fetchWalletBalance() {
