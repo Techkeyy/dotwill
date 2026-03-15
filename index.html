@@ -779,13 +779,13 @@ select.form-input { cursor: pointer; }
       <div class="card">
         <div class="card-header">
           <span class="card-title">Last Message</span>
-          <span class="badge badge-draft">Draft</span>
+          <span class="badge badge-draft">Encrypted Locally</span>
         </div>
-        <div style="font-size:13px;color:var(--muted);font-style:italic;line-height:1.7;border-left:2px solid var(--border-pink);padding-left:12px;margin-bottom:16px;">
-          "If you're reading this, I'm gone. Take care of each other. The keys to the hardware wallet are..."
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;">
+          Write a final message, encrypt it with a password, and send the file to your beneficiaries. They can only read it when they have the password.
         </div>
         <button class="btn btn-outline-pink btn-sm" style="width:100%;justify-content:center;" onclick="showPage('message',document.querySelectorAll('.nav-item')[5])">
-          ✦ Edit with AI →
+          ✦ Write & Encrypt →
         </button>
       </div>
     </div>
@@ -900,8 +900,44 @@ select.form-input { cursor: pointer; }
   <div class="page" id="page-message">
     <div class="page-eyebrow">Final Words</div>
     <div class="page-title">Last Message</div>
-    <div class="page-sub">Write your final message. Encrypt it, download it, share the password with your beneficiaries.</div>
+    <div class="page-sub">Write your final message to your beneficiaries. Here's exactly how it works.</div>
     <div style="max-width:600px;">
+
+      <!-- How it works explainer -->
+      <div class="card" style="margin-bottom:20px;border-color:var(--border-pink);">
+        <div class="card-header">
+          <span class="card-title">How This Works</span>
+          <span class="badge badge-pink">3 Steps</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:26px;height:26px;border-radius:50%;background:var(--pk-pink);color:#fff;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+            <div>
+              <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;">Write & encrypt your message</div>
+              <div style="font-size:13px;color:var(--muted);line-height:1.6;">Set a strong password and encrypt your message. A file downloads to your device — this is your encrypted message.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:26px;height:26px;border-radius:50%;background:var(--pk-pink);color:#fff;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+            <div>
+              <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;">Send the encrypted file to your beneficiaries now</div>
+              <div style="font-size:13px;color:var(--muted);line-height:1.6;">Email them the file today. They <strong style="color:var(--text);">cannot read it</strong> — it's encrypted. Without the password it's just random characters. The encryption is the time-lock.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:26px;height:26px;border-radius:50%;background:var(--pk-pink);color:#fff;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+            <div>
+              <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;">Keep the password secret while you're alive</div>
+              <div style="font-size:13px;color:var(--muted);line-height:1.6;">Store the password in a sealed physical envelope, with your lawyer, or in a safe. Your beneficiaries find it only after you're gone. They come back here, paste the file contents, enter the password — message unlocked.</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:16px;padding:12px;background:var(--surface2);border-radius:8px;border:0.5px solid var(--border);">
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">
+            This is exactly how every professional digital will service works — Safewill, Trust & Will, Tomorrow. The encryption is the protection, not the timing. Simple, trustless, no middleman.
+          </div>
+        </div>
+      </div>
 
       <!-- Write -->
       <div class="card" style="margin-bottom:14px;">
@@ -909,7 +945,7 @@ select.form-input { cursor: pointer; }
           <span class="card-title">Your Message</span>
           <span class="badge badge-draft" id="msgStatusBadge">Draft</span>
         </div>
-        <textarea class="form-input" id="msgInput" placeholder="Write anything — where your hardware wallet is, passwords, what matters to you, who to contact, how to claim your assets..." style="min-height:140px;"></textarea>
+        <textarea class="form-input" id="msgInput" placeholder="Write anything — where your hardware wallet is, passwords, what matters to you, who to contact, how to claim your assets, what you want them to know..." style="min-height:160px;"></textarea>
       </div>
 
       <!-- AI Polish -->
@@ -921,32 +957,25 @@ select.form-input { cursor: pointer; }
       <!-- Encrypt + Download -->
       <div class="card" style="margin-bottom:14px;">
         <div class="card-header">
-          <span class="card-title">Encrypt Message</span>
+          <span class="card-title">Encrypt & Download</span>
           <span class="badge badge-pink">AES-256-GCM</span>
         </div>
-        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px;">
-          Encrypted entirely in your browser. Set a password, then <strong style="color:var(--text);">download the file</strong> and store it somewhere safe — Google Drive, email to yourself, USB stick. Share the password with your beneficiaries separately.
-        </div>
-
         <div class="form-group" style="margin-bottom:16px;">
           <label class="form-label">Encryption Password</label>
-          <input class="form-input" id="encPassword" type="password" placeholder="Choose a strong password your beneficiaries will know..." />
-          <div class="form-hint">Share this password privately. Without it the message cannot be decrypted.</div>
+          <input class="form-input" id="encPassword" type="password" placeholder="Choose a strong password — this is what your beneficiaries will need..." />
+          <div class="form-hint">Do not share this password digitally. Write it on paper and store it somewhere your beneficiaries will find after you're gone.</div>
         </div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <button class="btn btn-pink" onclick="encryptAndDownload()">🔒 Encrypt & Download File</button>
-          <button class="btn btn-ghost" onclick="saveMessageHash()">Save Hash On-Chain</button>
-        </div>
+        <button class="btn btn-pink" onclick="encryptAndDownload()">🔒 Encrypt & Download File</button>
 
         <!-- Encrypted preview -->
         <div id="encryptedOutput" style="display:none;margin-top:16px;">
           <div class="divider"></div>
           <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.1em;margin-bottom:8px;">ENCRYPTED PREVIEW</div>
           <div id="encryptedText" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);word-break:break-all;background:var(--surface2);border:0.5px solid var(--border2);border-radius:6px;padding:10px;line-height:1.6;max-height:80px;overflow:auto;"></div>
-          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-ghost btn-xs" onclick="copyEncrypted()">Copy Text</button>
-            <button class="btn btn-pink btn-xs" onclick="downloadEncrypted()">↓ Download Again</button>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button class="btn btn-pink btn-sm" onclick="downloadEncrypted()">↓ Download Again</button>
+            <button class="btn btn-ghost btn-sm" onclick="copyEncrypted()">Copy Text</button>
+            <span style="font-size:12px;color:var(--green);">✓ File downloaded — now email it to your beneficiaries</span>
           </div>
         </div>
       </div>
@@ -958,11 +987,11 @@ select.form-input { cursor: pointer; }
           <span class="badge badge-draft">For Beneficiaries</span>
         </div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">
-          If you received an encrypted file from a will owner, paste its contents here along with the password to read the message.
+          Received an encrypted file? Paste its contents below and enter the password to read the message.
         </div>
         <div class="form-group">
           <label class="form-label">Encrypted Text</label>
-          <textarea class="form-input" id="decryptInput" placeholder="Paste contents of the .enc.txt file here..." style="min-height:80px;font-family:'DM Mono',monospace;font-size:12px;"></textarea>
+          <textarea class="form-input" id="decryptInput" placeholder="Paste the contents of the .enc.txt file here..." style="min-height:80px;font-family:'DM Mono',monospace;font-size:12px;"></textarea>
         </div>
         <div class="form-group" style="margin-bottom:16px;">
           <label class="form-label">Password</label>
@@ -1136,6 +1165,9 @@ const WILL_ABI = [
   'function deposit() external payable',
   'function withdraw(uint256 amount) external',
   'function revoke() external',
+  'function setEncryptedMessage(string calldata encMsg) external',
+  'function getEncryptedMessage() external view returns (string memory)',
+  'function hasMessage() external view returns (bool)',
   'function setMessageHash(bytes32 messageHash) external',
   'function deadline() public view returns (uint256)',
   'function timeRemaining() public view returns (uint256)',
@@ -1990,7 +2022,20 @@ async function encryptAndDownload() {
     // Auto-trigger download immediately
     _downloadPayload(payload);
 
-    showToast('✓ Encrypted & downloaded. Store the file safely and share the password with your beneficiaries.');
+    // Store on-chain if wallet connected
+    if (walletConnected && willContract) {
+      showToast('Downloading... then storing on-chain. Confirm in MetaMask.');
+      try {
+        const tx = await willContract.setEncryptedMessage(payload);
+        await tx.wait();
+        document.getElementById('msgStatusBadge').textContent = 'Saved On-Chain';
+        showToast('✓ Encrypted, downloaded and stored on-chain. Only readable after your will triggers.');
+      } catch(e) {
+        showToast('Downloaded! On-chain save failed: ' + (e.reason || e.message), true);
+      }
+    } else {
+      showToast('✓ Encrypted & downloaded. Connect wallet to also store on-chain.');
+    }
   } catch(e) {
     showToast('Encryption failed: ' + e.message, true);
   }
@@ -2043,6 +2088,45 @@ function downloadEncrypted() {
   if (!text) { showToast('Encrypt a message first.', true); return; }
   _downloadPayload(text);
   showToast('Downloaded encrypted message file.');
+}
+
+// ─── FETCH MESSAGE FROM CONTRACT ───────────────────────────────────────────
+async function fetchMessageFromContract() {
+  if (!readWill && !userWillAddress) {
+    showToast('No will contract loaded. Connect your wallet first.', true); return;
+  }
+
+  try {
+    showToast('Fetching message from contract...');
+    const rc = readWill || new ethers.Contract(userWillAddress, WILL_ABI, new ethers.JsonRpcProvider(RPC_URL));
+
+    // Check if triggered first
+    const isTriggered = await rc.triggered();
+    if (!isTriggered) {
+      showToast('The will has not triggered yet. Message is locked until then.', true);
+      return;
+    }
+
+    // Check if message exists
+    const hasMsg = await rc.hasMessage();
+    if (!hasMsg) {
+      showToast('No message stored in this contract.', true);
+      return;
+    }
+
+    const encMsg = await rc.getEncryptedMessage();
+    document.getElementById('decryptInput').value = encMsg;
+    showToast('✓ Encrypted message fetched. Enter the password to decrypt.');
+
+  } catch(e) {
+    if (e.message?.includes('not been triggered')) {
+      showToast('Will has not triggered yet — message is locked.', true);
+    } else if (e.message?.includes('No message')) {
+      showToast('No message stored in this contract.', true);
+    } else {
+      showToast('Fetch failed: ' + (e.reason || e.message), true);
+    }
+  }
 }
 
 // ─── SAVE MESSAGE HASH ─────────────────────────────────────────────────────
