@@ -1201,7 +1201,7 @@ select.form-input { cursor: pointer; }
       </div>
 
       <!-- Popular wallets -->
-      <div>
+      <div id="popularSection" style="display:none;">
         <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.1em;text-transform:uppercase;padding:0 4px;margin-bottom:8px;">Popular</div>
         <div id="popularList"></div>
       </div>
@@ -1401,53 +1401,56 @@ function connectWallet() {
 
 function openWalletPicker() {
   const installed = [];
-  const popular = [
-    { name: 'Rainbow',      icon: '🌈', url: 'https://rainbow.me' },
-    { name: 'Base Account', icon: '🔵', url: 'https://wallet.coinbase.com' },
-    { name: 'WalletConnect',icon: '🔗', url: 'https://walletconnect.com' },
-  ];
 
-  // Detect installed wallets
   if (window.ethereum) {
     const providers = window.ethereum.providers || [window.ethereum];
     const seen = new Set();
     providers.forEach(p => {
       if (p.isMetaMask && !p.isRabby && !seen.has('MetaMask')) {
-        installed.push({ name: 'MetaMask', icon: '🦊', tag: 'Recent', provider: p });
-        seen.add('MetaMask');
+        installed.push({ name: 'MetaMask',     icon: '🦊', tag: 'Recent',    provider: p }); seen.add('MetaMask');
       }
       if (p.isRabby && !seen.has('Rabby')) {
-        installed.push({ name: 'Rabby Wallet', icon: '🐰', tag: '', provider: p });
-        seen.add('Rabby');
+        installed.push({ name: 'Rabby Wallet', icon: '🐰', tag: '',          provider: p }); seen.add('Rabby');
       }
       if (p.isZerion && !seen.has('Zerion')) {
-        installed.push({ name: 'Zerion', icon: '⚡', tag: '', provider: p });
-        seen.add('Zerion');
+        installed.push({ name: 'Zerion',       icon: '⚡', tag: '',          provider: p }); seen.add('Zerion');
       }
       if (p.isCoinbaseWallet && !seen.has('Coinbase')) {
-        installed.push({ name: 'Coinbase', icon: '🔵', tag: '', provider: p });
-        seen.add('Coinbase');
+        installed.push({ name: 'Coinbase',     icon: '🔵', tag: '',          provider: p }); seen.add('Coinbase');
       }
       if (p.isBraveWallet && !seen.has('Brave')) {
-        installed.push({ name: 'Brave Wallet', icon: '🦁', tag: '', provider: p });
-        seen.add('Brave');
+        installed.push({ name: 'Brave Wallet', icon: '🦁', tag: '',          provider: p }); seen.add('Brave');
       }
     });
-    // Fallback
-    if (installed.length === 0) {
+    if (installed.length === 0 && window.ethereum) {
       installed.push({ name: 'Browser Wallet', icon: '🌐', tag: 'Detected', provider: window.ethereum });
     }
   }
 
-  // Render installed
-  const instList = document.getElementById('installedList');
+  // Render installed wallets
+  const instList    = document.getElementById('installedList');
   const instSection = document.getElementById('installedSection');
+  const popSection  = document.getElementById('popularSection');
+
   if (installed.length === 0) {
+    // No wallet found
     instSection.style.display = 'none';
+    popSection.style.display  = 'none';
+    instList.innerHTML = `
+      <div style="padding:16px 12px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:12px;">🔍</div>
+        <div style="font-size:14px;font-weight:500;color:#fff;margin-bottom:6px;">No wallet detected</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:16px;line-height:1.5;">Install a wallet extension then refresh this page.</div>
+        <a href="https://metamask.io/download/" target="_blank"
+          style="display:inline-block;background:#E6007A;color:#fff;font-size:13px;font-weight:600;padding:9px 20px;border-radius:8px;text-decoration:none;">
+          Get MetaMask →
+        </a>
+      </div>`;
   } else {
     instSection.style.display = 'block';
+    popSection.style.display  = 'none'; // hide popular — we only show real wallets
     instList.innerHTML = installed.map((w, i) => `
-      <button onclick="connectWithWallet(${i})" data-wallet="${i}"
+      <button onclick="connectWithWallet(${i})"
         style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:transparent;border:none;cursor:pointer;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:2px;transition:background .12s;"
         onmouseover="this.style.background='rgba(255,255,255,0.06)'"
         onmouseout="this.style.background='transparent'">
@@ -1457,19 +1460,6 @@ function openWalletPicker() {
       </button>`).join('');
   }
 
-  // Render popular
-  const popList = document.getElementById('popularList');
-  popList.innerHTML = popular.map(w => `
-    <a href="${w.url}" target="_blank"
-      style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:transparent;text-decoration:none;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:2px;transition:background .12s;"
-      onmouseover="this.style.background='rgba(255,255,255,0.06)'"
-      onmouseout="this.style.background='transparent'">
-      <span style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${w.icon}</span>
-      <span style="flex:1;text-align:left;">${w.name}</span>
-      <span style="font-size:11px;color:rgba(255,255,255,0.3);">↗</span>
-    </a>`).join('');
-
-  // Store installed wallets for connectWithWallet()
   window._detectedWallets = installed;
   document.getElementById('walletPickerModal').classList.add('open');
 }
