@@ -1052,12 +1052,7 @@ select.form-input { cursor: pointer; }
       </div>
 
       <!-- AI Polish -->
-      <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:14px;flex-wrap:wrap;">
-        <button class="btn btn-pink" onclick="genMsg()">✦ Polish with AI</button>
-        <div style="flex:1;min-width:200px;">
-          <input class="form-input" id="geminiKeyInput" type="password" placeholder="Paste Gemini API key (free at aistudio.google.com)" style="font-size:12px;" />
-        </div>
-      </div>
+      <button class="btn btn-pink" onclick="genMsg()" style="margin-bottom:14px;">✦ Polish with AI</button>
       <div id="msgAI" style="margin-bottom:14px;"></div>
 
       <div class="divider"></div>
@@ -2026,27 +2021,13 @@ async function genMsg() {
   box.style.display = 'block';
   box.innerHTML = `<div class="ai-wrap"><div class="ai-header"><div class="ai-led"></div><div class="ai-tag">AI Writing...</div></div><div class="loader"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div></div>`;
   try {
-    const inputKey = document.getElementById('geminiKeyInput')?.value.trim();
-    if (inputKey) window._geminiKey = inputKey;
-    const GEMINI_KEY = window._geminiKey || prompt('Enter your Gemini API key (free at aistudio.google.com/apikey):');
-    if (!GEMINI_KEY) { box.innerHTML = `<div class="ai-wrap"><div class="ai-body" style="color:var(--muted);">No API key provided. Get a free key at aistudio.google.com/apikey</div></div>`; return; }
-    window._geminiKey = GEMINI_KEY;
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`, {
+    const r = await fetch('https://dotwill-ai.israelolawale891.workers.dev/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{ text: `You are helping someone write a final message to their loved ones stored on-chain as part of their crypto inheritance will. This message will only be read after they pass away.\n\nTheir rough notes:\n"${raw}"\n\nRewrite this as a warm, clear, heartfelt final message. Personal and genuine — not formal. Include practical info from their notes. Under 200 words. Return ONLY the message text.` }]
-        }]
-      })
+      body: JSON.stringify({ rawMessage: raw })
     });
     const d = await r.json();
-    console.log('Gemini response:', JSON.stringify(d));
-    const msg = d?.candidates?.[0]?.content?.parts?.[0]?.text
-      || d?.candidates?.[0]?.output
-      || d?.text
-      || d?.error?.message
-      || 'Could not generate.';
+    const msg = d?.message || d?.error || 'Could not generate.';
     box.innerHTML = `<div class="ai-wrap"><div class="ai-header"><div class="ai-led"></div><div class="ai-tag">AI Suggestion</div></div><div class="ai-body">${msg.replace(/\n/g,'<br/>')}</div><div style="margin-top:12px;display:flex;gap:8px;"><button class="btn btn-outline-pink btn-xs" onclick="useMsg(this)">Use this →</button><button class="btn btn-ghost btn-xs" onclick="genMsg()">Regenerate</button></div></div>`;
   } catch {
     box.innerHTML = `<div class="ai-wrap"><div class="ai-body" style="color:var(--muted);">AI unavailable — add your Gemini API key to enable.</div></div>`;
