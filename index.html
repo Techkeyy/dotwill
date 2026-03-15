@@ -900,16 +900,16 @@ select.form-input { cursor: pointer; }
   <div class="page" id="page-message">
     <div class="page-eyebrow">Final Words</div>
     <div class="page-title">Last Message</div>
-    <div class="page-sub">Write to your beneficiaries. Encrypted in your browser — only they can read it.</div>
+    <div class="page-sub">Write your final message. Encrypt it, download it, share the password with your beneficiaries.</div>
     <div style="max-width:600px;">
 
-      <!-- Write message -->
+      <!-- Write -->
       <div class="card" style="margin-bottom:14px;">
         <div class="card-header">
           <span class="card-title">Your Message</span>
-          <span class="badge badge-draft" id="msgStatusBadge">Unsaved</span>
+          <span class="badge badge-draft" id="msgStatusBadge">Draft</span>
         </div>
-        <textarea class="form-input" id="msgInput" placeholder="Write anything — location of hardware wallet, passwords, what matters to you, who to contact, how to claim your assets..." style="min-height:140px;"></textarea>
+        <textarea class="form-input" id="msgInput" placeholder="Write anything — where your hardware wallet is, passwords, what matters to you, who to contact, how to claim your assets..." style="min-height:140px;"></textarea>
       </div>
 
       <!-- AI Polish -->
@@ -918,60 +918,61 @@ select.form-input { cursor: pointer; }
 
       <div class="divider"></div>
 
-      <!-- Encryption panel -->
+      <!-- Encrypt + Download -->
       <div class="card" style="margin-bottom:14px;">
         <div class="card-header">
-          <span class="card-title">Encrypt & Save</span>
-          <span class="badge badge-pink">AES-256</span>
+          <span class="card-title">Encrypt Message</span>
+          <span class="badge badge-pink">AES-256-GCM</span>
         </div>
-        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;">
-          Your message is encrypted <strong style="color:var(--text);">entirely in your browser</strong> using AES-256-GCM before being stored. Nobody — not even us — can read it. Only someone with the decryption key can.
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px;">
+          Encrypted entirely in your browser. Set a password, then <strong style="color:var(--text);">download the file</strong> and store it somewhere safe — Google Drive, email to yourself, USB stick. Share the password with your beneficiaries separately.
         </div>
 
-        <!-- Encrypt with password -->
-        <div class="form-group" style="margin-bottom:12px;">
+        <div class="form-group" style="margin-bottom:16px;">
           <label class="form-label">Encryption Password</label>
           <input class="form-input" id="encPassword" type="password" placeholder="Choose a strong password your beneficiaries will know..." />
-          <div class="form-hint">Share this password with your beneficiaries privately. Without it they cannot decrypt your message.</div>
+          <div class="form-hint">Share this password privately. Without it the message cannot be decrypted.</div>
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <button class="btn btn-pink" onclick="encryptAndSave()">🔒 Encrypt & Save Locally</button>
+          <button class="btn btn-pink" onclick="encryptAndDownload()">🔒 Encrypt & Download File</button>
           <button class="btn btn-ghost" onclick="saveMessageHash()">Save Hash On-Chain</button>
         </div>
 
-        <!-- Encrypted output -->
+        <!-- Encrypted preview -->
         <div id="encryptedOutput" style="display:none;margin-top:16px;">
           <div class="divider"></div>
-          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.1em;margin-bottom:8px;">ENCRYPTED MESSAGE</div>
-          <div id="encryptedText" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text);word-break:break-all;background:var(--surface2);border:0.5px solid var(--border2);border-radius:6px;padding:10px;line-height:1.6;max-height:100px;overflow:auto;"></div>
-          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
-            <button class="btn btn-ghost btn-xs" onclick="copyEncrypted()">Copy Encrypted Text</button>
-            <button class="btn btn-ghost btn-xs" onclick="downloadEncrypted()">Download as File</button>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.1em;margin-bottom:8px;">ENCRYPTED PREVIEW</div>
+          <div id="encryptedText" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);word-break:break-all;background:var(--surface2);border:0.5px solid var(--border2);border-radius:6px;padding:10px;line-height:1.6;max-height:80px;overflow:auto;"></div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-xs" onclick="copyEncrypted()">Copy Text</button>
+            <button class="btn btn-pink btn-xs" onclick="downloadEncrypted()">↓ Download Again</button>
           </div>
         </div>
       </div>
 
-      <!-- Decrypt panel -->
+      <!-- Decrypt — for beneficiaries -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Decrypt a Message</span>
           <span class="badge badge-draft">For Beneficiaries</span>
         </div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">If you have an encrypted message and the password, paste it here to read it.</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">
+          If you received an encrypted file from a will owner, paste its contents here along with the password to read the message.
+        </div>
         <div class="form-group">
           <label class="form-label">Encrypted Text</label>
-          <textarea class="form-input" id="decryptInput" placeholder="Paste encrypted message here..." style="min-height:80px;font-family:'DM Mono',monospace;font-size:12px;"></textarea>
+          <textarea class="form-input" id="decryptInput" placeholder="Paste contents of the .enc.txt file here..." style="min-height:80px;font-family:'DM Mono',monospace;font-size:12px;"></textarea>
         </div>
-        <div class="form-group" style="margin-bottom:14px;">
+        <div class="form-group" style="margin-bottom:16px;">
           <label class="form-label">Password</label>
           <input class="form-input" id="decPassword" type="password" placeholder="Enter the decryption password..." />
         </div>
-        <button class="btn btn-outline-pink" onclick="decryptMessage()">🔓 Decrypt</button>
-        <div id="decryptedOutput" style="display:none;margin-top:14px;">
+        <button class="btn btn-outline-pink" onclick="decryptMessage()">🔓 Decrypt & Read</button>
+        <div id="decryptedOutput" style="display:none;margin-top:16px;">
           <div class="divider"></div>
-          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green);letter-spacing:.1em;margin-bottom:8px;">DECRYPTED MESSAGE</div>
-          <div id="decryptedText" style="font-size:13px;color:var(--text);line-height:1.7;background:var(--green-dim);border:0.5px solid rgba(34,197,94,0.2);border-radius:8px;padding:14px;"></div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green);letter-spacing:.1em;margin-bottom:10px;">MESSAGE</div>
+          <div id="decryptedText" style="font-size:14px;color:var(--text);line-height:1.75;background:var(--green-dim);border:0.5px solid rgba(34,197,94,0.2);border-radius:8px;padding:16px;"></div>
         </div>
       </div>
 
@@ -1934,7 +1935,7 @@ async function deriveKey(password, salt) {
   );
 }
 
-async function encryptAndSave() {
+async function encryptAndDownload() {
   const msg  = document.getElementById('msgInput').value.trim();
   const pass = document.getElementById('encPassword').value.trim();
 
@@ -1953,28 +1954,37 @@ async function encryptAndSave() {
       enc.encode(msg)
     );
 
-    // Pack: salt(16) + iv(12) + ciphertext → base64
     const combined = new Uint8Array(16 + 12 + encrypted.byteLength);
     combined.set(salt, 0);
     combined.set(iv, 16);
     combined.set(new Uint8Array(encrypted), 28);
 
-    const b64 = btoa(String.fromCharCode(...combined));
+    const b64     = btoa(String.fromCharCode(...combined));
     const payload = 'DOTWILL_ENC_V1:' + b64;
 
-    // Show output
-    document.getElementById('encryptedText').textContent    = payload;
+    // Show preview
+    document.getElementById('encryptedText').textContent     = payload;
     document.getElementById('encryptedOutput').style.display = 'block';
-    document.getElementById('msgStatusBadge').textContent   = 'Encrypted';
-    document.getElementById('msgStatusBadge').className     = 'badge badge-live';
+    document.getElementById('msgStatusBadge').textContent    = 'Encrypted';
+    document.getElementById('msgStatusBadge').className      = 'badge badge-live';
 
-    // Save to localStorage for convenience
-    localStorage.setItem('dotwill_encrypted_msg', payload);
+    // Auto-trigger download immediately
+    _downloadPayload(payload);
 
-    showToast('✓ Message encrypted with AES-256-GCM. Copy or download it.');
+    showToast('✓ Encrypted & downloaded. Store the file safely and share the password with your beneficiaries.');
   } catch(e) {
     showToast('Encryption failed: ' + e.message, true);
   }
+}
+
+function _downloadPayload(payload) {
+  const blob = new Blob([payload], { type: 'text/plain' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'dotwill-last-message.enc.txt';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 async function decryptMessage() {
@@ -2010,14 +2020,9 @@ function copyEncrypted() {
 }
 
 function downloadEncrypted() {
-  const text     = document.getElementById('encryptedText').textContent;
-  const blob     = new Blob([text], { type: 'text/plain' });
-  const url      = URL.createObjectURL(blob);
-  const a        = document.createElement('a');
-  a.href         = url;
-  a.download     = 'dotwill-last-message.enc.txt';
-  a.click();
-  URL.revokeObjectURL(url);
+  const text = document.getElementById('encryptedText').textContent;
+  if (!text) { showToast('Encrypt a message first.', true); return; }
+  _downloadPayload(text);
   showToast('Downloaded encrypted message file.');
 }
 
