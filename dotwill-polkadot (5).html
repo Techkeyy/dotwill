@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DotWill</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23000'/><ellipse cx='16' cy='7.5' rx='5' ry='3.2' fill='%23E6007A'/><ellipse cx='16' cy='24.5' rx='5' ry='3.2' fill='%23E6007A'/><ellipse cx='7.2' cy='11.8' rx='3.2' ry='5' transform='rotate(-60 7.2 11.8)' fill='%23E6007A'/><ellipse cx='24.8' cy='11.8' rx='3.2' ry='5' transform='rotate(60 24.8 11.8)' fill='%23E6007A'/><ellipse cx='7.2' cy='20.2' rx='3.2' ry='5' transform='rotate(60 7.2 20.2)' fill='%23E6007A'/><ellipse cx='24.8' cy='20.2' rx='3.2' ry='5' transform='rotate(-60 24.8 20.2)' fill='%23E6007A'/></svg>" />
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── Official Polkadot Brand ── */
+  --pk-pink:       #E6007A;
+  --pk-black:      #000000;
+  --pk-white:      #FFFFFF;
+
+  /* ── App Surface Scale (dark) ── */
+  --bg:            #090909;
+  --surface:       #111111;
+  --surface2:      #191919;
+  --surface3:      #222222;
+  --border:        rgba(255,255,255,0.07);
+  --border2:       rgba(255,255,255,0.12);
+  --border-pink:   rgba(230,0,122,0.25);
+
+  /* ── Pink derived ── */
+  --pink-dim:      rgba(230,0,122,0.10);
+  --pink-glow:     rgba(230,0,122,0.05);
+  --pink-strong:   rgba(230,0,122,0.18);
+
+  /* ── Semantic ── */
+  --green:         #22c55e;
+  --green-dim:     rgba(34,197,94,0.10);
+  --amber:         #f59e0b;
+  --amber-dim:     rgba(245,158,11,0.10);
+  --red:           #ef4444;
+  --red-dim:       rgba(239,68,68,0.10);
+
+  /* ── Text ── */
+  --text:          #F0F0F0;
+  --muted:         #aaaabc;
+  --muted2:        #555570;
+
+  /* ── Pink tones for readability ── */
+  --pk-pink-label: rgba(230,0,122,0.70);  /* soft pink for small labels */
+  --pk-pink-mid:   rgba(230,0,122,0.88);  /* mid pink for secondary values */
+
+  --sidebar-w:     230px;
+  --radius:        10px;
+  --radius-sm:     7px;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  /* subtle dot grid */
+  background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ─── SIDEBAR ─────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--pk-black);
+  border-right: 0.5px solid rgba(230,0,122,0.2);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 50;
+}
+
+.sidebar-logo {
+  padding: 22px 18px 18px;
+  border-bottom: 0.5px solid rgba(230,0,122,0.15);
+  display: flex; align-items: center; gap: 11px;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-mark svg { width: 32px; height: 32px; }
+.logo-name {
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 700; font-size: 15px;
+  color: var(--pk-white);
+  letter-spacing: -0.02em;
+}
+.logo-name span { color: var(--pk-pink); }
+
+.sidebar-nav { padding: 14px 10px; flex: 1; }
+.nav-section-label {
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); padding: 0 10px;
+  margin: 14px 0 4px;
+  font-family: 'DM Mono', monospace;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 10px; border-radius: var(--radius-sm);
+  font-size: 13.5px; font-weight: 400; color: var(--muted);
+  cursor: pointer; transition: all 0.12s;
+  margin-bottom: 2px; border: 0.5px solid transparent;
+  user-select: none; line-height: 1.3;
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.nav-item.active {
+  background: var(--pink-dim);
+  border-color: var(--border-pink);
+  color: var(--pk-pink);
+}
+.nav-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; opacity: 0.5; flex-shrink: 0;
+}
+.nav-item.active .nav-dot { opacity: 1; }
+
+.sidebar-footer {
+  padding: 14px 10px;
+  border-top: 0.5px solid rgba(230,0,122,0.12);
+}
+.wallet-pill {
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  background: var(--surface2);
+  border: 0.5px solid var(--border2);
+  cursor: pointer; transition: border-color 0.12s;
+}
+.wallet-pill:hover { border-color: var(--border-pink); }
+.wp-row1 {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--muted); margin-bottom: 4px;
+  font-family: 'DM Sans', sans-serif; font-weight: 400;
+}
+.wp-led { width: 6px; height: 6px; border-radius: 50%; background: var(--muted2); transition: background 0.3s; }
+.wp-led.live { background: var(--green); box-shadow: 0 0 5px rgba(34,197,94,0.5); }
+.wp-addr {
+  font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ─── MAIN ────────────────────────────────────────────── */
+.main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; }
+
+.topbar {
+  height: 54px;
+  background: rgba(9,9,9,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  position: sticky; top: 0; z-index: 40;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-crumb {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 11px; font-weight: 500; color: var(--text);
+  letter-spacing: 0.02em;
+}
+.topbar-badge {
+  font-size: 12px; font-weight: 500;
+  padding: 3px 9px; border-radius: 20px;
+  background: var(--pink-dim);
+  border: 0.5px solid var(--border-pink);
+  color: var(--pk-pink);
+  font-family: 'DM Mono', monospace;
+}
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+/* ─── BUTTONS ─────────────────────────────────────────── */
+.btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500;
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  border: 0.5px solid var(--border2);
+  cursor: pointer; transition: all 0.12s; line-height: 1;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-ghost { background: transparent; color: var(--muted); }
+.btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+.btn-pink {
+  background: var(--pk-pink); color: #fff;
+  border-color: var(--pk-pink); font-weight: 600;
+}
+.btn-pink:hover { background: #cc006d; border-color: #cc006d; }
+.btn-outline-pink {
+  background: transparent; color: var(--pk-pink);
+  border-color: var(--border-pink);
+}
+.btn-outline-pink:hover { background: var(--pink-dim); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-xs { padding: 4px 10px; font-size: 11px; }
+
+/* ─── PAGES ───────────────────────────────────────────── */
+.page { display: none; padding: 28px 32px 60px; }
+.page.active { display: block; }
+
+.page-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--pk-pink-label); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+.page-eyebrow::after { content: ''; flex: 0 0 20px; height: 0.5px; background: var(--pk-pink-label); }
+.page-title {
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 700; font-size: 22px;
+  color: var(--text); letter-spacing: -0.03em;
+  margin-bottom: 4px; line-height: 1.2;
+}
+.page-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+
+/* ─── CARDS ───────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
+}
+.card-accent { border-left: 2px solid var(--pk-pink); padding-left: 16px; }
+
+/* ─── STATUS BANNER ───────────────────────────────────── */
+.status-banner {
+  border-radius: var(--radius); padding: 18px 22px;
+  margin-bottom: 22px;
+  display: flex; align-items: center; justify-content: space-between;
+  border: 0.5px solid;
+  position: relative; overflow: hidden;
+}
+.status-banner::before {
+  content: ''; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 3px;
+}
+.banner-safe { background: var(--green-dim); border-color: rgba(34,197,94,0.2); }
+.banner-safe::before { background: var(--green); }
+.banner-warn { background: var(--amber-dim); border-color: rgba(245,158,11,0.2); }
+.banner-warn::before { background: var(--amber); }
+.banner-info { background: var(--pink-dim); border-color: var(--border-pink); }
+.banner-info::before { background: var(--pk-pink); }
+
+.banner-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.banner-value { font-size: 13px; color: var(--text); font-weight: 500; }
+.countdown {
+  font-family: 'DM Mono', monospace;
+  font-size: 20px; color: var(--pk-pink); font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+/* ─── STAT GRID ───────────────────────────────────────── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 22px;
+}
+.stat-card {
+  background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px 18px;
+}
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+}
+.stat-value { font-size: 21px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.stat-sub { font-size: 12px; color: var(--muted); }
+.stat-pink { color: var(--pk-pink); }
+.stat-green { color: var(--green); }
+
+/* ─── TWO COL ─────────────────────────────────────────── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px; }
+
+/* ─── HEARTBEAT ITEMS ─────────────────────────────────── */
+.hb-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.hb-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.hb-on  { background: var(--pk-pink); box-shadow: 0 0 6px rgba(230,0,122,0.5); }
+.hb-off { background: var(--muted2); }
+.hb-label { font-size: 13px; color: var(--text); flex: 1; }
+.hb-time  { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+
+/* progress */
+.prog-track { height: 3px; border-radius: 2px; background: var(--surface3); margin-top: 14px; overflow: hidden; }
+.prog-fill   { height: 100%; background: var(--pk-pink); border-radius: 2px; }
+
+/* ─── BENEFICIARY ─────────────────────────────────────── */
+.bene-row {
+  display: flex; align-items: center; gap: 12px; padding: 11px 0;
+  border-bottom: 0.5px solid var(--border);
+}
+.bene-row:last-child { border-bottom: none; padding-bottom: 0; }
+.bene-av {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--pink-strong);
+  border: 0.5px solid var(--border-pink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+  color: var(--pk-pink); flex-shrink: 0;
+}
+.bene-name  { font-size: 13px; font-weight: 500; color: var(--text); }
+.bene-addr  { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+.bene-share { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--pk-pink); font-weight: 500; }
+
+/* ─── ASSET ROW ───────────────────────────────────────── */
+.asset-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+.asset-row:last-child { border-bottom: none; }
+.asset-ic { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.asset-name { font-size: 13px; color: var(--text); flex: 1; }
+.asset-amt { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); }
+.asset-val { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text); margin-left: 10px; }
+
+/* ─── BADGE ───────────────────────────────────────────── */
+.badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 4px;
+}
+.badge-live   { background: var(--green-dim);  color: var(--green);    border: 0.5px solid rgba(34,197,94,0.2); }
+.badge-draft  { background: var(--surface2);   color: var(--muted);    border: 0.5px solid var(--border2); }
+.badge-pink   { background: var(--pink-dim);   color: var(--pk-pink);  border: 0.5px solid var(--border-pink); }
+.badge-warn   { background: var(--amber-dim);  color: var(--amber);    border: 0.5px solid rgba(245,158,11,0.2); }
+
+/* ─── FORM ────────────────────────────────────────────── */
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px;
+}
+.form-input {
+  width: 100%; background: var(--surface2);
+  border: 0.5px solid var(--border2); border-radius: var(--radius-sm);
+  color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px;
+  padding: 11px 14px; outline: none; transition: border-color 0.12s;
+}
+.form-input:focus { border-color: var(--pk-pink); }
+.form-input::placeholder { color: var(--muted2); }
+textarea.form-input { resize: vertical; min-height: 120px; line-height: 1.65; }
+select.form-input { cursor: pointer; }
+.form-hint { font-size: 13px; color: var(--muted); margin-top: 7px; line-height: 1.55; }
+.form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ─── SETUP STEPPER ───────────────────────────────────── */
+.stepper {
+  display: flex; margin-bottom: 30px;
+  background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius);
+  overflow: hidden;
+}
+.step-tab {
+  flex: 1; padding: 14px 16px; display: flex; align-items: center; gap: 10px;
+  border-right: 0.5px solid var(--border); cursor: pointer; transition: background 0.12s;
+}
+.step-tab:last-child { border-right: none; }
+.step-tab.s-active { background: var(--pink-dim); }
+.step-tab.s-done   { background: var(--green-dim); }
+.step-num {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700;
+}
+.sn-idle   { background: var(--surface3);  color: var(--muted); }
+.sn-active { background: var(--pk-pink);   color: #fff; }
+.sn-done   { background: var(--green);     color: #fff; }
+.step-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500;
+}
+.sl-idle   { color: var(--muted); }
+.sl-active { color: var(--pk-pink); }
+.sl-done   { color: var(--green); }
+
+/* ─── BENEFICIARY CHIP ────────────────────────────────── */
+.b-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.b-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface2); border: 0.5px solid var(--border2);
+  border-radius: 6px; padding: 5px 10px;
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text);
+}
+.chip-x { color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; }
+.chip-x:hover { color: var(--red); }
+
+/* ─── AI BOX ──────────────────────────────────────────── */
+.ai-wrap {
+  background: var(--pink-glow);
+  border: 0.5px solid var(--border-pink);
+  border-radius: var(--radius); padding: 16px; margin-top: 14px;
+}
+.ai-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.ai-led { width: 6px; height: 6px; border-radius: 50%; background: var(--pk-pink); animation: aled 2s ease-in-out infinite; }
+@keyframes aled { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+.ai-tag {
+  font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--pk-pink-label);
+}
+.ai-body { font-size: 13px; color: var(--text); line-height: 1.7; white-space: pre-line; }
+.loader  { display: flex; gap: 4px; align-items: center; }
+.ldot { width: 4px; height: 4px; border-radius: 50%; background: var(--pk-pink); animation: lbounce 1.2s infinite; }
+.ldot:nth-child(2) { animation-delay: 0.2s; }
+.ldot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes lbounce { 0%,80%,100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+/* ─── TIMELINE ────────────────────────────────────────── */
+.tl-item { display: flex; gap: 14px; padding-bottom: 22px; position: relative; }
+.tl-item:not(:last-child)::before {
+  content: ''; position: absolute; left: 13px; top: 27px; bottom: 0;
+  width: 0.5px; background: var(--border2);
+}
+.tl-ic {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; position: relative; z-index: 1;
+}
+.tl-pink  { background: var(--pink-dim);  border: 0.5px solid var(--border-pink); }
+.tl-green { background: var(--green-dim); border: 0.5px solid rgba(34,197,94,0.3); }
+.tl-gray  { background: var(--surface2);  border: 0.5px solid var(--border2); }
+.tl-content { flex: 1; padding-top: 3px; }
+.tl-event { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.tl-time  { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+.tl-detail { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.55; }
+
+/* ─── DIVIDER ─────────────────────────────────────────── */
+.divider { height: 0.5px; background: var(--border); margin: 18px 0; }
+
+/* ─── MODAL ───────────────────────────────────────────── */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.88);
+  backdrop-filter: blur(12px);
+  z-index: 200; display: none;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.overlay.open { display: flex; }
+.modal {
+  background: var(--surface); border: 0.5px solid var(--border-pink);
+  border-radius: 14px; padding: 26px;
+  width: 100%; max-width: 460px;
+  animation: mup 0.18s ease;
+}
+@keyframes mup { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+.modal-title {
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 700; font-size: 16px; color: var(--text);
+  margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between;
+}
+.mclose {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: transparent; border: 0.5px solid var(--border2);
+  color: var(--muted); cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.mclose:hover { color: var(--text); }
+
+/* ─── POLKADOT NETWORK STRIP ──────────────────────────── */
+.network-strip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 12px 4px 8px; border-radius: 20px;
+  background: var(--surface2); border: 0.5px solid var(--border-pink);
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--pk-pink);
+}
+.net-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--pk-pink); animation: aled 2s infinite; }
+
+/* ── RESPONSIVE ───────────────────────────────────────── */
+
+/* Tablet — 860px and below */
+@media (max-width: 860px) {
+  :root { --sidebar-w: 0px; }
+
+  /* Sidebar becomes slide-over drawer */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 200;
+    width: 260px;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  /* Overlay behind drawer */
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 199;
+    backdrop-filter: blur(2px);
+  }
+  .sidebar-overlay.open { display: block; }
+
+  /* Show hamburger in topbar */
+  .hamburger { display: flex !important; }
+
+  .main { margin-left: 0; }
+
+  .topbar { padding: 0 16px; }
+  .topbar-crumb { font-size: 12px; }
+  .network-strip { display: none; }
+
+  .page { padding: 16px 16px 60px; }
+
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .two-col    { grid-template-columns: 1fr; }
+
+  .page-title { font-size: 18px; }
+
+  .status-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .countdown { font-size: 16px; }
+
+  .stepper { flex-direction: column; }
+  .step-tab { border-right: none; border-bottom: 0.5px solid var(--border); }
+  .step-tab:last-child { border-bottom: none; }
+
+  .form-row { grid-template-columns: 1fr; }
+}
+
+/* Mobile — 480px and below */
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+
+  .topbar-right .btn-ghost { display: none; }
+  .hb-btn-label { display: none; }
+
+  .page-title { font-size: 16px; }
+  .page-sub   { font-size: 12px; }
+
+  .card { padding: 14px; }
+
+  .status-banner { padding: 14px; }
+
+  .btn-lg { padding: 10px 18px; font-size: 13px; }
+
+  .hb-time { display: none; }
+
+  /* Stack beneficiary row on very small screens */
+  .bene-row { flex-wrap: wrap; gap: 8px; }
+
+  /* Setup form full width inputs */
+  #bLabel, #bAddr { min-width: 100% !important; }
+  #bShare { width: 100% !important; }
+
+  .modal { padding: 18px; }
+  .modal-title { font-size: 14px; }
+
+  .topbar { height: 50px; }
+  .topbar-crumb { font-size: 12px; }
+}
+
+/* Large screens — keep things from getting too wide */
+@media (min-width: 1400px) {
+  .page { padding: 32px 48px 80px; }
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile sidebar overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- ══ SIDEBAR ══════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <!-- Official Polkadot dot mark (simplified SVG) -->
+    <div class="logo-mark">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="16" cy="7.5" rx="5" ry="3.2" fill="#E6007A"/>
+        <ellipse cx="16" cy="24.5" rx="5" ry="3.2" fill="#E6007A"/>
+        <ellipse cx="7.2" cy="11.8" rx="3.2" ry="5" transform="rotate(-60 7.2 11.8)" fill="#E6007A"/>
+        <ellipse cx="24.8" cy="11.8" rx="3.2" ry="5" transform="rotate(60 24.8 11.8)" fill="#E6007A"/>
+        <ellipse cx="7.2" cy="20.2" rx="3.2" ry="5" transform="rotate(60 7.2 20.2)" fill="#E6007A"/>
+        <ellipse cx="24.8" cy="20.2" rx="3.2" ry="5" transform="rotate(-60 24.8 20.2)" fill="#E6007A"/>
+      </svg>
+    </div>
+    <span class="logo-name">DotWill</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+      <span class="nav-dot"></span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('will',this)">
+      <span class="nav-dot"></span> My Will
+    </div>
+    <div class="nav-item" onclick="showPage('history',this)">
+      <span class="nav-dot"></span> History
+    </div>
+
+    <div class="nav-section-label">Manage</div>
+    <div class="nav-item" onclick="showPage('setup',this)">
+      <span class="nav-dot"></span> Setup Will
+    </div>
+    <div class="nav-item" onclick="openHB()">
+      <span class="nav-dot"></span> Send Heartbeat
+    </div>
+    <div class="nav-item" onclick="showPage('message',this)">
+      <span class="nav-dot"></span> Last Message
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <!-- Network indicator -->
+    <div id="networkRow" style="display:none;margin-bottom:8px;padding:7px 10px;border-radius:7px;background:var(--surface2);border:0.5px solid var(--border2);cursor:pointer;transition:border-color .15s;" onclick="switchNetwork()" title="Click to switch to Polkadot Hub TestNet">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:7px;">
+          <div id="networkDot" style="width:6px;height:6px;border-radius:50%;background:var(--muted2);flex-shrink:0;"></div>
+          <span id="networkName" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Unknown Network</span>
+        </div>
+        <span style="font-size:12px;color:var(--pk-pink);font-family:'DM Mono',monospace;" id="networkSwitchHint" style="display:none;">Switch →</span>
+      </div>
+    </div>
+
+    <!-- Wallet pill -->
+    <div class="wallet-pill" id="walletPill" onclick="connectWallet()">
+      <div class="wp-row1">
+        <div class="wp-led" id="wpLed"></div>
+        <span id="wpStatus">Not connected</span>
+      </div>
+      <div class="wp-addr" id="wpAddr">Connect wallet →</div>
+    </div>
+
+    <!-- Disconnect button — hidden until connected -->
+    <button id="disconnectBtn" onclick="disconnectWallet()" style="display:none;width:100%;margin-top:6px;padding:7px;border-radius:7px;background:transparent;border:0.5px solid rgba(239,68,68,0.2);color:var(--red);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='var(--red-dim)'" onmouseout="this.style.background='transparent'">
+      Disconnect
+    </button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══════════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <!-- Hamburger — hidden on desktop, shown on mobile -->
+      <button class="hamburger" onclick="toggleSidebar()" style="display:none;background:transparent;border:0.5px solid var(--border2);border-radius:6px;padding:6px 8px;cursor:pointer;color:var(--text);flex-direction:column;gap:4px;align-items:center;justify-content:center;width:34px;height:34px;">
+        <span style="display:block;width:14px;height:1.5px;background:currentColor;border-radius:1px;"></span>
+        <span style="display:block;width:14px;height:1.5px;background:currentColor;border-radius:1px;"></span>
+        <span style="display:block;width:14px;height:1.5px;background:currentColor;border-radius:1px;"></span>
+      </button>
+      <span class="topbar-crumb" id="topCrumb">Dashboard</span>
+      <div class="network-strip"><div class="net-dot"></div>Polkadot Hub TestNet</div>
+    </div>
+    <div class="topbar-right">
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;" id="walletBalDot" style="display:none;"></span>
+        <span id="walletBalDisplay" style="display:none;">— PAS</span>
+      </div>
+      <!-- Wrong network warning -->
+      <button id="wrongNetworkBtn" onclick="switchNetwork()" style="display:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:6px 12px;border-radius:7px;background:var(--amber-dim);border:0.5px solid rgba(245,158,11,0.3);color:var(--amber);cursor:pointer;">
+        ⚠ Wrong Network
+      </button>
+      <button class="btn btn-ghost btn-sm" id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
+      <button class="btn btn-pink btn-sm" onclick="openHB()" id="hbBtn">♡ <span class="hb-btn-label">Heartbeat</span></button>
+    </div>
+  </div>
+
+  <!-- ══ DASHBOARD ══════════════════════════════════════ -->
+  <div class="page active" id="page-dashboard">
+
+    <div class="page-eyebrow">Polkadot Hub</div>
+    <div class="page-title">Your Will</div>
+    <div class="page-sub">On-chain inheritance, secured by Solidity on Polkadot Hub</div>
+
+    <!-- No will prompt -->
+    <div id="setupPrompt" style="display:none;margin-bottom:22px;">
+      <div class="card" style="border-color:var(--border-pink);text-align:center;padding:32px 20px;">
+        <div style="font-size:28px;margin-bottom:12px;">⬡</div>
+        <div style="font-family:'Unbounded',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px;">No Will Deployed</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">You haven't set up your on-chain inheritance yet.<br/>It takes less than 2 minutes.</div>
+        <button class="btn btn-pink" onclick="showPage('setup', document.querySelectorAll('.nav-item')[3])">Create Your Will →</button>
+      </div>
+    </div>
+
+    <!-- Status banner -->
+    <div class="status-banner banner-safe" id="statusBanner">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--green-dim);border:0.5px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;font-size:15px;">♡</div>
+        <div>
+          <div class="banner-label" id="bannerLabel" style="color:var(--green);">Loading...</div>
+          <div class="banner-value" id="bannerValue">Fetching contract status...</div>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.12em;margin-bottom:5px;">COUNTDOWN</div>
+        <div class="countdown" id="countdown">--:--:--:--</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Protected Assets</div>
+        <div class="stat-value stat-pink" id="statBalance">Loading...</div>
+        <div class="stat-sub">on Polkadot Hub TestNet</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Beneficiaries</div>
+        <div class="stat-value" id="statBenes">—</div>
+        <div class="stat-sub">Registered on-chain</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Interval</div>
+        <div class="stat-value stat-green" id="statInterval">—</div>
+        <div class="stat-sub" id="statLastHB">Last: —</div>
+      </div>
+    </div>
+
+    <!-- Two col -->
+    <div class="two-col">
+
+      <!-- Heartbeat -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Heartbeat</span>
+          <span class="badge badge-live" id="hbBadge">Active</span>
+        </div>
+        <div id="hbHistory">
+          <div style="color:var(--muted);font-size:13px;">Loading...</div>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="hbProgFill" style="width:0%;"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:7px;">
+          <span style="font-size:12px;color:var(--muted);" id="hbElapsed">— elapsed</span>
+          <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pk-pink);" id="hbLeft">—</span>
+        </div>
+      </div>
+
+      <!-- Beneficiaries -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Beneficiaries</span>
+          <button class="btn btn-ghost btn-xs" onclick="showPage('setup',document.querySelectorAll('.nav-item')[3])">Edit</button>
+        </div>
+        <div id="beneList">
+          <div style="color:var(--muted);font-size:13px;">Loading...</div>
+        </div>
+        <div style="margin-top:14px;padding:12px;background:var(--surface2);border-radius:8px;border:0.5px solid var(--border);">
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.1em;margin-bottom:8px;">DISTRIBUTION</div>
+          <div style="display:flex;gap:2px;height:5px;border-radius:3px;overflow:hidden;" id="distBar"></div>
+          <div style="display:flex;justify-content:space-between;margin-top:7px;flex-wrap:wrap;gap:4px;" id="distLabels"></div>
+        </div>
+      </div>
+
+      <!-- Assets -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Protected Assets</span>
+          <button class="btn btn-outline-pink btn-xs" onclick="openDepositModal()">+ Deposit</button>
+        </div>
+        <div class="asset-row">
+          <div class="asset-ic" style="background:var(--pink-dim);color:var(--pk-pink);">◈</div>
+          <span class="asset-name">PAS</span>
+          <span class="asset-amt" id="assetBalance">0.0000 PAS</span>
+        </div>
+        <div style="padding-top:12px;margin-top:4px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;color:var(--muted);">Vault balance</span>
+          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--pk-pink);" id="assetBalanceLarge">0.0000 PAS</span>
+        </div>
+      </div>
+
+      <!-- Last message -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Last Message</span>
+          <span class="badge badge-draft">Draft</span>
+        </div>
+        <div style="font-size:13px;color:var(--muted);font-style:italic;line-height:1.7;border-left:2px solid var(--border-pink);padding-left:12px;margin-bottom:16px;">
+          "If you're reading this, I'm gone. Take care of each other. The keys to the hardware wallet are..."
+        </div>
+        <button class="btn btn-outline-pink btn-sm" style="width:100%;justify-content:center;" onclick="showPage('message',document.querySelectorAll('.nav-item')[5])">
+          ✦ Edit with AI →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SETUP ═══════════════════════════════════════════ -->
+  <div class="page" id="page-setup">
+    <div class="page-eyebrow">Configuration</div>
+    <div class="page-title">Setup Your Will</div>
+    <div class="page-sub">Deploy your inheritance contract in 3 steps</div>
+
+    <div class="stepper" style="max-width:600px;">
+      <div class="step-tab s-active" onclick="goStep(1)">
+        <div class="step-num sn-active" id="sn1">1</div>
+        <span class="step-label sl-active" id="sl1">Beneficiaries</span>
+      </div>
+      <div class="step-tab" id="st2" onclick="goStep(2)">
+        <div class="step-num sn-idle" id="sn2">2</div>
+        <span class="step-label sl-idle" id="sl2">Heartbeat</span>
+      </div>
+      <div class="step-tab" id="st3" onclick="goStep(3)">
+        <div class="step-num sn-idle" id="sn3">3</div>
+        <span class="step-label sl-idle" id="sl3">Deploy</span>
+      </div>
+    </div>
+
+    <!-- Step 1 -->
+    <div id="sp1" style="max-width:540px;">
+      <div class="card" style="margin-bottom:18px;">
+        <div class="card-header"><span class="card-title">Add Beneficiaries</span></div>
+        <div class="form-group">
+          <label class="form-label">Beneficiary Details</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+            <input class="form-input" id="bLabel" placeholder="Name (e.g. Sarah)" style="flex:1;min-width:120px;" />
+            <input class="form-input" id="bAddr" placeholder="0x wallet address" style="flex:2;min-width:180px;" />
+            <input class="form-input" id="bShare" type="number" placeholder="%" style="width:72px;flex:none;" />
+            <button class="btn btn-pink btn-sm" onclick="addB()">Add</button>
+          </div>
+          <div class="form-hint">Shares must total exactly 100%.</div>
+        </div>
+        <div class="b-chips" id="bChips"></div>
+      </div>
+      <button class="btn btn-pink" onclick="goStep(2)">Continue →</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="sp2" style="max-width:540px;display:none;">
+      <div class="card" style="margin-bottom:18px;">
+        <div class="card-header"><span class="card-title">Heartbeat Settings</span></div>
+        <div class="form-group">
+          <label class="form-label">Check-in Interval</label>
+          <select class="form-input" id="intervalSelect">
+            <option value="604800">Every 7 days (recommended)</option>
+            <option value="1209600">Every 14 days</option>
+            <option value="2592000">Every 30 days</option>
+            <option value="7776000">Every 90 days</option>
+          </select>
+          <div class="form-hint">Miss this interval + grace period = will executes automatically.</div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Grace Period</label>
+          <select class="form-input" id="graceSelect">
+            <option value="259200">3 days after missed heartbeat</option>
+            <option value="604800">7 days after missed heartbeat</option>
+            <option value="1209600">14 days after missed heartbeat</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
+        <button class="btn btn-pink" onclick="goStep(3);reviewSummary()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="sp3" style="max-width:540px;display:none;">
+      <div class="card" style="margin-bottom:18px;">
+        <div class="card-header"><span class="card-title">Review &amp; Deploy</span></div>
+        <div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:14px;">
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.12em;margin-bottom:10px;">SUMMARY</div>
+          <div style="font-size:13px;display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Beneficiaries</span><span id="reviewBenes">—</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Interval</span><span id="reviewInterval">—</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Grace period</span><span id="reviewGrace">—</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Initial deposit</span><span id="reviewDeposit" style="color:var(--pk-pink);">0.000 PAS</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Network</span><span style="color:var(--pk-pink);">Polkadot Hub TestNet</span></div>
+          </div>
+        </div>
+        <div style="background:var(--red-dim);border:0.5px solid rgba(239,68,68,0.2);border-radius:8px;padding:12px;margin-bottom:14px;">
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--red);letter-spacing:.08em;margin-bottom:4px;">⚠ IMMUTABLE ONCE DEPLOYED</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Double-check all beneficiary addresses. Wrong addresses mean permanent loss of funds.</div>
+        </div>
+
+        <!-- PAS Deposit -->
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Initial Vault Deposit (PAS)</label>
+          <div style="position:relative;">
+            <input class="form-input" id="depositAmount" type="number" min="0" step="0.001" placeholder="0.1" style="padding-right:50px;" />
+            <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">PAS</span>
+          </div>
+          <div class="form-hint">PAS tokens locked in your vault on deploy. You can add more later via Deposit. Leave 0 to start empty.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" onclick="goStep(2)">← Back</button>
+        <button class="btn btn-pink" onclick="deployW()">Deploy Will Contract →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LAST MESSAGE ════════════════════════════════════ -->
+  <div class="page" id="page-message">
+    <div class="page-eyebrow">Final Words</div>
+    <div class="page-title">Last Message</div>
+    <div class="page-sub">Write to your beneficiaries. Encrypted in your browser — only they can read it.</div>
+    <div style="max-width:600px;">
+
+      <!-- Write message -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-header">
+          <span class="card-title">Your Message</span>
+          <span class="badge badge-draft" id="msgStatusBadge">Unsaved</span>
+        </div>
+        <textarea class="form-input" id="msgInput" placeholder="Write anything — location of hardware wallet, passwords, what matters to you, who to contact, how to claim your assets..." style="min-height:140px;"></textarea>
+      </div>
+
+      <!-- AI Polish -->
+      <button class="btn btn-pink" onclick="genMsg()" style="margin-bottom:14px;">✦ Polish with AI</button>
+      <div id="msgAI" style="margin-bottom:14px;"></div>
+
+      <div class="divider"></div>
+
+      <!-- Encryption panel -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-header">
+          <span class="card-title">Encrypt & Save</span>
+          <span class="badge badge-pink">AES-256</span>
+        </div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;">
+          Your message is encrypted <strong style="color:var(--text);">entirely in your browser</strong> using AES-256-GCM before being stored. Nobody — not even us — can read it. Only someone with the decryption key can.
+        </div>
+
+        <!-- Encrypt with password -->
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Encryption Password</label>
+          <input class="form-input" id="encPassword" type="password" placeholder="Choose a strong password your beneficiaries will know..." />
+          <div class="form-hint">Share this password with your beneficiaries privately. Without it they cannot decrypt your message.</div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-pink" onclick="encryptAndSave()">🔒 Encrypt & Save Locally</button>
+          <button class="btn btn-ghost" onclick="saveMessageHash()">Save Hash On-Chain</button>
+        </div>
+
+        <!-- Encrypted output -->
+        <div id="encryptedOutput" style="display:none;margin-top:16px;">
+          <div class="divider"></div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.1em;margin-bottom:8px;">ENCRYPTED MESSAGE</div>
+          <div id="encryptedText" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text);word-break:break-all;background:var(--surface2);border:0.5px solid var(--border2);border-radius:6px;padding:10px;line-height:1.6;max-height:100px;overflow:auto;"></div>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-xs" onclick="copyEncrypted()">Copy Encrypted Text</button>
+            <button class="btn btn-ghost btn-xs" onclick="downloadEncrypted()">Download as File</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decrypt panel -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Decrypt a Message</span>
+          <span class="badge badge-draft">For Beneficiaries</span>
+        </div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">If you have an encrypted message and the password, paste it here to read it.</div>
+        <div class="form-group">
+          <label class="form-label">Encrypted Text</label>
+          <textarea class="form-input" id="decryptInput" placeholder="Paste encrypted message here..." style="min-height:80px;font-family:'DM Mono',monospace;font-size:12px;"></textarea>
+        </div>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label class="form-label">Password</label>
+          <input class="form-input" id="decPassword" type="password" placeholder="Enter the decryption password..." />
+        </div>
+        <button class="btn btn-outline-pink" onclick="decryptMessage()">🔓 Decrypt</button>
+        <div id="decryptedOutput" style="display:none;margin-top:14px;">
+          <div class="divider"></div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green);letter-spacing:.1em;margin-bottom:8px;">DECRYPTED MESSAGE</div>
+          <div id="decryptedText" style="font-size:13px;color:var(--text);line-height:1.7;background:var(--green-dim);border:0.5px solid rgba(34,197,94,0.2);border-radius:8px;padding:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ HISTORY ═════════════════════════════════════════ -->
+  <div class="page" id="page-history">
+    <div class="page-eyebrow">On-chain events</div>
+    <div class="page-title">Activity History</div>
+    <div class="page-sub">Every transaction your will contract has made</div>
+    <div class="card" style="max-width:560px;">
+      <div id="historyFeed">
+        <div style="color:var(--muted);font-size:13px;padding:8px 0;">Connect your wallet to load on-chain events.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MY WILL ══════════════════════════════════════════ -->
+  <div class="page" id="page-will">
+    <div class="page-eyebrow">Contract</div>
+    <div class="page-title">My Will</div>
+    <div class="page-sub">Deployed contract details and configuration</div>
+    <div style="max-width:520px;">
+      <div class="card card-accent" style="margin-bottom:14px;">
+        <div class="card-header"><span class="card-title">Contract Details</span><span class="badge badge-live">Live</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Address</span><a id="willContractLink" href="#" target="_blank" style="color:var(--pk-pink);text-decoration:none;">—</a></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Network</span><span>Polkadot Hub TestNet</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Owner</span><span id="willOwner">—</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Interval</span><span id="willInterval">—</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Grace Period</span><span id="willGrace">—</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Last Heartbeat</span><span id="willLastHB" style="color:var(--green);">—</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Status</span><span id="willStatus">—</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline-pink btn-sm" onclick="openExplorer()">View on Explorer ↗</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(239,68,68,0.2);" onclick="revokeWill()">Revoke Will</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ DEPOSIT MODAL ══════════════════════════════════════ -->
+<div class="overlay" id="depositModal">
+  <div class="modal">
+    <div class="modal-title">
+      Deposit PAS to Vault
+      <button class="mclose" onclick="closeM('depositModal')">✕</button>
+    </div>
+    <div style="background:var(--pink-dim);border:0.5px solid var(--border-pink);border-radius:8px;padding:14px;margin-bottom:18px;">
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pk-pink);letter-spacing:.1em;margin-bottom:5px;">WHAT THIS DOES</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6;">Locks PAS tokens into your will vault. These tokens will be distributed to your beneficiaries when the will triggers.</div>
+    </div>
+    <div class="form-group" style="margin-bottom:18px;">
+      <label class="form-label">Amount to Deposit</label>
+      <div style="position:relative;">
+        <input class="form-input" id="depositModalAmount" type="number" min="0.001" step="0.001" placeholder="0.1" style="padding-right:50px;" />
+        <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">PAS</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:7px;">
+        <div class="form-hint" style="margin-top:0;">Keep some PAS for gas fees.</div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Wallet: <span id="modalWalletBal" style="color:var(--text);">—</span>
+          <button onclick="useMaxDeposit()" style="background:none;border:none;color:var(--pk-pink);font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;padding:0 0 0 6px;">MAX</button>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+      <button class="btn btn-ghost" onclick="closeM('depositModal')">Cancel</button>
+      <button class="btn btn-pink" onclick="depositPAS()">Deposit PAS ◈</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HEARTBEAT MODAL ════════════════════════════════════ -->
+<div class="overlay" id="hbModal">
+  <div class="modal">
+    <div class="modal-title">
+      Send Heartbeat
+      <button class="mclose" onclick="closeM('hbModal')">✕</button>
+    </div>
+    <div style="background:var(--green-dim);border:0.5px solid rgba(34,197,94,0.2);border-radius:8px;padding:14px;margin-bottom:18px;">
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green);letter-spacing:.1em;margin-bottom:5px;">WHAT THIS DOES</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6;">Sends a lightweight transaction confirming you're alive. Resets the countdown timer back to 7 days.</div>
+    </div>
+    <div style="font-size:13px;display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Est. gas cost</span><span>~0.0001 DOT</span></div>
+      <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Timer resets to</span><span style="color:var(--green);">7 days from now</span></div>
+    </div>
+    <div class="divider"></div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+      <button class="btn btn-ghost" onclick="closeM('hbModal')">Cancel</button>
+      <button class="btn btn-pink" onclick="sendHB()">Confirm ♡</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.1/ethers.umd.min.js"></script>
+<script>
+// ─── CONFIG ────────────────────────────────────────────────────────────────
+const FACTORY_ADDRESS  = '0xbB4797c9E49Ce80FF64652aC322ccC8F4C0161C6';
+const CHAIN_ID         = 420420417;
+const CHAIN_ID_HEX     = '0x' + CHAIN_ID.toString(16);
+const RPC_URL          = 'https://eth-rpc-testnet.polkadot.io/';
+const EXPLORER         = 'https://blockscout-testnet.polkadot.io';
+
+const FACTORY_ABI = [
+  {
+    "inputs": [
+      { "internalType": "address payable[]", "name": "_beneficiaryWallets", "type": "address[]" },
+      { "internalType": "uint256[]",         "name": "_shareBps",           "type": "uint256[]" },
+      { "internalType": "string[]",          "name": "_labels",             "type": "string[]"  },
+      { "internalType": "uint256",           "name": "_heartbeatInterval",  "type": "uint256"   },
+      { "internalType": "uint256",           "name": "_gracePeriod",        "type": "uint256"   }
+    ],
+    "name": "createWill",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "user", "type": "address" }],
+    "name": "getWill",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "user", "type": "address" }],
+    "name": "hasWill",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalWills",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true,  "internalType": "address", "name": "user",         "type": "address" },
+      { "indexed": true,  "internalType": "address", "name": "willContract", "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "timestamp",    "type": "uint256" }
+    ],
+    "name": "WillCreated",
+    "type": "event"
+  }
+];
+
+const WILL_ABI = [
+  'function heartbeat() external',
+  'function trigger() external',
+  'function claim(uint256 index) external',
+  'function deposit() external payable',
+  'function withdraw(uint256 amount) external',
+  'function revoke() external',
+  'function setMessageHash(bytes32 messageHash) external',
+  'function deadline() public view returns (uint256)',
+  'function timeRemaining() public view returns (uint256)',
+  'function canTrigger() public view returns (bool)',
+  'function owner() public view returns (address)',
+  'function triggered() public view returns (bool)',
+  'function revoked() public view returns (bool)',
+  'function lastHeartbeat() public view returns (uint256)',
+  'function heartbeatInterval() public view returns (uint256)',
+  'function gracePeriod() public view returns (uint256)',
+  'function getBeneficiaries() external view returns (address[],uint256[],string[],bool[])',
+  'function status() external view returns (uint256 balance, uint256 lastBeat, uint256 nextDeadline, uint256 secondsLeft, bool willTriggered, bool willRevoked, uint256 numBeneficiaries)',
+  'event Heartbeat(address indexed owner, uint256 timestamp, uint256 nextDeadline)',
+  'event WillTriggered(address indexed triggeredBy, uint256 timestamp)',
+  'event Claimed(address indexed beneficiary, uint256 amount, uint256 shareBps)',
+  'event Deposited(address indexed from, uint256 amount)',
+  'event Revoked(address indexed owner, uint256 refundAmount)',
+];
+
+// ─── STATE ─────────────────────────────────────────────────────────────────
+let provider, signer;
+let factoryContract, readFactory;
+let willContract, readWill;
+let walletConnected = false, walletAddress = '';
+let userWillAddress = null;
+let countdownTimer  = null;
+
+// ─── BOOT ──────────────────────────────────────────────────────────────────
+async function boot() {
+  const rp = new ethers.JsonRpcProvider(RPC_URL);
+  readFactory = new ethers.Contract(FACTORY_ADDRESS, FACTORY_ABI, rp);
+  // Show empty state until wallet connects
+  showNoWillState();
+}
+
+// ─── SIDEBAR TOGGLE (mobile) ───────────────────────────────────────────────
+function toggleSidebar() {
+  const sidebar  = document.querySelector('.sidebar');
+  const overlay  = document.getElementById('sidebarOverlay');
+  const isOpen   = sidebar.classList.contains('open');
+  sidebar.classList.toggle('open', !isOpen);
+  overlay.classList.toggle('open', !isOpen);
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+}
+
+function closeSidebarOnMobile() {
+  if (window.innerWidth <= 860) {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const map = { dashboard:'Dashboard', will:'My Will', history:'History', setup:'Setup Will', message:'Last Message' };
+  document.getElementById('topCrumb').textContent = map[id] || id;
+  if (id === 'dashboard' && userWillAddress) loadDashboard();
+  if (id === 'will'      && userWillAddress) loadWillPage();
+  if (id === 'history'   && userWillAddress) loadHistory();
+  closeSidebarOnMobile();
+}
+
+// ─── WALLET CONNECT ────────────────────────────────────────────────────────
+async function connectWallet() {
+  if (typeof window.ethereum === 'undefined') {
+    alert('MetaMask not found!\n\nInstall MetaMask then we\'ll automatically add the Polkadot Hub TestNet for you.');
+    return;
+  }
+  try {
+    // Force MetaMask to show account selection dialog every time
+    await window.ethereum.request({
+      method: 'wallet_requestPermissions',
+      params: [{ eth_accounts: {} }]
+    });
+
+    provider      = new ethers.BrowserProvider(window.ethereum);
+    await provider.send('eth_requestAccounts', []);
+    signer        = await provider.getSigner();
+    walletAddress = await signer.getAddress();
+    factoryContract = new ethers.Contract(FACTORY_ADDRESS, FACTORY_ABI, signer);
+    walletConnected = true;
+
+    // Auto-add or switch to Polkadot Hub TestNet
+    await switchNetwork();
+    await checkNetwork();
+
+    const short = walletAddress.slice(0,6)+'...'+walletAddress.slice(-4);
+    document.getElementById('wpAddr').textContent    = short;
+    document.getElementById('wpStatus').textContent  = 'Connected';
+    document.getElementById('wpLed').classList.add('live');
+
+    // Wallet pill now does nothing on click (already connected)
+    document.getElementById('walletPill').onclick = null;
+
+    // Show disconnect button
+    document.getElementById('disconnectBtn').style.display = 'block';
+
+    // Update topbar connect button
+    const connectBtn = document.getElementById('connectBtn');
+    connectBtn.textContent = short;
+    connectBtn.style.color = 'var(--green)';
+    connectBtn.onclick     = null; // disable re-clicking
+
+    await fetchWalletBalance();
+    await checkUserWill();
+
+    // Listen for network/account changes
+    window.ethereum.on('accountsChanged', () => window.location.reload());
+    window.ethereum.on('chainChanged',    () => { checkNetwork(); fetchWalletBalance(); });
+
+  } catch(e) {
+    console.error(e);
+    showToast('Connection failed: ' + (e.message || e), true);
+  }
+}
+
+// ─── CHECK IF USER HAS A WILL ──────────────────────────────────────────────
+async function checkUserWill() {
+  try {
+    const willAddr = await readFactory.getWill(walletAddress);
+    if (willAddr && willAddr !== ethers.ZeroAddress) {
+      // User already has a will — load it
+      userWillAddress = willAddr;
+      const rp = new ethers.JsonRpcProvider(RPC_URL);
+      readWill    = new ethers.Contract(willAddr, WILL_ABI, rp);
+      willContract = new ethers.Contract(willAddr, WILL_ABI, signer);
+      showHasWillState();
+      await loadDashboard();
+    } else {
+      // No will found — guide them to setup
+      userWillAddress = null;
+      showNoWillState();
+    }
+  } catch(e) {
+    console.error('checkUserWill error:', e);
+    showNoWillState();
+  }
+}
+
+// ─── UI STATE: NO WILL ─────────────────────────────────────────────────────
+function showNoWillState() {
+  // Update banner
+  const banner = document.getElementById('statusBanner');
+  banner.className = 'status-banner banner-info';
+  document.getElementById('bannerLabel').textContent  = 'No Will Found';
+  document.getElementById('bannerLabel').style.color  = 'var(--pk-pink)';
+  document.getElementById('bannerValue').textContent  = walletConnected
+    ? 'You have no will deployed. Go to Setup Will to create one.'
+    : 'Connect your wallet to get started.';
+  document.getElementById('countdown').textContent    = '--:--:--:--';
+
+  // Clear stats
+  document.getElementById('statBalance').textContent  = '0.0000 PAS';
+  document.getElementById('statInterval').textContent = '—';
+  document.getElementById('statLastHB').textContent   = 'Never';
+
+  // Clear beneficiary list
+  const beneList = document.getElementById('beneList');
+  if (beneList) beneList.innerHTML = `<div style="color:var(--muted);font-size:13px;padding:8px 0;">No beneficiaries — set up your will first.</div>`;
+  const distBar = document.getElementById('distBar');
+  if (distBar) distBar.innerHTML = '';
+  const distLabels = document.getElementById('distLabels');
+  if (distLabels) distLabels.innerHTML = '';
+
+  // Show setup prompt card
+  const setupPrompt = document.getElementById('setupPrompt');
+  if (setupPrompt) setupPrompt.style.display = 'block';
+}
+
+// ─── UI STATE: HAS WILL ────────────────────────────────────────────────────
+function showHasWillState() {
+  const setupPrompt = document.getElementById('setupPrompt');
+  if (setupPrompt) setupPrompt.style.display = 'none';
+}
+
+// ─── LOAD DASHBOARD ────────────────────────────────────────────────────────
+async function loadDashboard() {
+  if (!userWillAddress) { showNoWillState(); return; }
+  try {
+    const s = await readWill.status();
+    const balance     = ethers.formatEther(s.balance);
+    const secondsLeft = Number(s.secondsLeft);
+
+    document.getElementById('statBalance').textContent  = parseFloat(balance).toFixed(4) + ' PAS';
+    const assetBal = document.getElementById('assetBalance');
+    const assetBalLg = document.getElementById('assetBalanceLarge');
+    if (assetBal)   assetBal.textContent   = parseFloat(balance).toFixed(4) + ' PAS';
+    if (assetBalLg) assetBalLg.textContent = parseFloat(balance).toFixed(4) + ' PAS';
+    document.getElementById('statInterval').textContent = fmtInterval(await readWill.heartbeatInterval());
+    document.getElementById('statLastHB').textContent   = fmtTimestamp(await readWill.lastHeartbeat());
+
+    const [wallets, shares, labels, claimed] = await readWill.getBeneficiaries();
+    const hbInterval = await readWill.heartbeatInterval();
+    document.getElementById('statBenes').textContent = wallets.length;
+    renderBeneficiaries(wallets, shares, labels, claimed, parseFloat(balance));
+    updateBanner(s.willTriggered, s.willRevoked, secondsLeft);
+    startCountdown(secondsLeft);
+    loadHeartbeatCard(secondsLeft, hbInterval);
+  } catch(e) {
+    console.error('loadDashboard error:', e);
+    showToast('Error loading dashboard: ' + e.message, true);
+  }
+}
+
+// ─── BANNER ────────────────────────────────────────────────────────────────
+function updateBanner(isTriggered, isRevoked, secondsLeft) {
+  const banner = document.getElementById('statusBanner');
+  const label  = document.getElementById('bannerLabel');
+  const value  = document.getElementById('bannerValue');
+  if (isRevoked) {
+    banner.className = 'status-banner banner-info';
+    label.textContent = 'Will Revoked'; label.style.color = 'var(--muted)';
+    value.textContent = 'This will has been permanently revoked.';
+  } else if (isTriggered) {
+    banner.className = 'status-banner banner-warn';
+    label.textContent = 'Will Triggered — Claims Open'; label.style.color = 'var(--amber)';
+    value.textContent = 'Deadline was missed. Beneficiaries can now claim.';
+  } else if (secondsLeft < 86400) {
+    banner.className = 'status-banner banner-warn';
+    label.textContent = 'Heartbeat Due Soon!'; label.style.color = 'var(--amber)';
+    value.textContent = 'Send a heartbeat now to keep your will safe.';
+  } else {
+    banner.className = 'status-banner banner-safe';
+    label.textContent = 'Active & Safe'; label.style.color = 'var(--green)';
+    value.textContent = 'Next heartbeat required in ' + fmtSeconds(secondsLeft);
+  }
+}
+
+// ─── RENDER BENEFICIARIES ──────────────────────────────────────────────────
+function renderBeneficiaries(wallets, shares, labels, claimed, totalBalance) {
+  const container = document.getElementById('beneList');
+  if (!container) return;
+  const colors = ['var(--pk-pink)', 'var(--muted)', 'var(--green)', 'var(--amber)'];
+  container.innerHTML = wallets.map((w, i) => {
+    const pct    = (Number(shares[i]) / 100).toFixed(2);
+    const amount = (totalBalance * Number(shares[i]) / 10000).toFixed(4);
+    const short  = w.slice(0,6)+'...'+w.slice(-4);
+    const initials = (labels[i]||'?').slice(0,2).toUpperCase();
+    return `
+      <div class="bene-row">
+        <div class="bene-av">${initials}</div>
+        <div style="flex:1;">
+          <div class="bene-name">${labels[i]||'Unnamed'}</div>
+          <div class="bene-addr">${short}</div>
+        </div>
+        <div class="bene-share">${pct}%</div>
+        ${claimed[i] ? '<span class="badge badge-live" style="margin-left:8px;">Claimed</span>' : ''}
+      </div>`;
+  }).join('');
+
+  const bar = document.getElementById('distBar');
+  const distLabels = document.getElementById('distLabels');
+  if (bar) {
+    bar.innerHTML = wallets.map((w, i) =>
+      `<div style="width:${Number(shares[i])/100}%;background:${colors[i%colors.length]};${i===0?'border-radius:2px 0 0 2px':i===wallets.length-1?'border-radius:0 2px 2px 0':''}"></div>`
+    ).join('');
+  }
+  if (distLabels) {
+    distLabels.innerHTML = wallets.map((w, i) =>
+      `<span style="font-family:'DM Mono',monospace;font-size:12px;color:${colors[i%colors.length]};">${labels[i]||w.slice(0,6)} · ${(totalBalance * Number(shares[i]) / 10000).toFixed(4)} PAS</span>`
+    ).join('');
+  }
+}
+
+// ─── LOAD WILL PAGE ────────────────────────────────────────────────────────
+async function loadWillPage() {
+  if (!userWillAddress) return;
+  try {
+    const [ownerAddr, interval, grace, lastHB, isTriggered, isRevoked] = await Promise.all([
+      readWill.owner(), readWill.heartbeatInterval(), readWill.gracePeriod(),
+      readWill.lastHeartbeat(), readWill.triggered(), readWill.revoked(),
+    ]);
+    const el = id => document.getElementById(id);
+    if (el('willOwner'))    el('willOwner').textContent    = ownerAddr.slice(0,6)+'...'+ownerAddr.slice(-4);
+    if (el('willInterval')) el('willInterval').textContent = fmtInterval(interval);
+    if (el('willGrace'))    el('willGrace').textContent    = fmtInterval(grace);
+    if (el('willLastHB'))   el('willLastHB').textContent   = fmtTimestamp(lastHB);
+    if (el('willStatus'))   el('willStatus').textContent   = isRevoked ? 'Revoked' : isTriggered ? 'Triggered' : 'Active';
+    // Update explorer links to use this user's will address
+    const shortAddr = userWillAddress.slice(0,8)+'...'+userWillAddress.slice(-6);
+    if (el('willContractLink')) {
+      el('willContractLink').href        = `${EXPLORER}/address/${userWillAddress}`;
+      el('willContractLink').textContent = shortAddr + ' ↗';
+    }
+  } catch(e) { console.error(e); }
+}
+
+// ─── LOAD HISTORY ──────────────────────────────────────────────────────────
+async function loadHistory() {
+  const feed = document.getElementById('historyFeed');
+  if (!feed) return;
+  if (!userWillAddress) {
+    feed.innerHTML = `<div style="color:var(--muted);font-size:13px;">No will deployed yet.</div>`;
+    return;
+  }
+  feed.innerHTML = `<div style="color:var(--muted);font-size:13px;">Loading on-chain events...</div>`;
+  try {
+    const rp = new ethers.JsonRpcProvider(RPC_URL);
+    const rc = new ethers.Contract(userWillAddress, WILL_ABI, rp);
+    const currentBlock = await rp.getBlockNumber();
+    const fromBlock    = Math.max(0, currentBlock - 50000);
+
+    const [hbEvents, trigEvents, claimEvents, depEvents] = await Promise.all([
+      rc.queryFilter(rc.filters.Heartbeat(),     fromBlock),
+      rc.queryFilter(rc.filters.WillTriggered(), fromBlock),
+      rc.queryFilter(rc.filters.Claimed(),       fromBlock),
+      rc.queryFilter(rc.filters.Deposited(),     fromBlock),
+    ]);
+
+    const all = [
+      ...hbEvents.map(e    => ({ block: e.blockNumber, type:'heartbeat', data: e })),
+      ...trigEvents.map(e  => ({ block: e.blockNumber, type:'triggered', data: e })),
+      ...claimEvents.map(e => ({ block: e.blockNumber, type:'claim',     data: e })),
+      ...depEvents.map(e   => ({ block: e.blockNumber, type:'deposit',   data: e })),
+    ].sort((a,b) => b.block - a.block);
+
+    if (all.length === 0) {
+      feed.innerHTML = `<div style="color:var(--muted);font-size:13px;padding:12px 0;">No events yet. Send a heartbeat to see activity here.</div>`;
+      return;
+    }
+
+    const icons  = { heartbeat:'♡', triggered:'⚠', claim:'◈', deposit:'↓' };
+    const colors = { heartbeat:'tl-pink', triggered:'tl-gray', claim:'tl-green', deposit:'tl-gray' };
+    feed.innerHTML = all.map(ev => {
+      const label = {
+        heartbeat: 'Heartbeat sent',
+        triggered: 'Will triggered',
+        claim:     `Claimed — ${ethers.formatEther(ev.data.args?.amount||0n).slice(0,6)} PAS`,
+        deposit:   `Deposited — ${ethers.formatEther(ev.data.args?.amount||0n).slice(0,6)} PAS`,
+      }[ev.type];
+      const txHash = ev.data.transactionHash;
+      const short  = txHash ? txHash.slice(0,8)+'...'+txHash.slice(-6) : '';
+      return `
+        <div class="tl-item">
+          <div class="tl-ic ${colors[ev.type]}">${icons[ev.type]}</div>
+          <div class="tl-content">
+            <div class="tl-event">${label}</div>
+            <div class="tl-time">Block #${ev.block} · <a href="${EXPLORER}/tx/${txHash}" target="_blank" style="color:var(--pk-pink);text-decoration:none;">${short} ↗</a></div>
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    console.error(e);
+    feed.innerHTML = `<div style="color:var(--muted);font-size:13px;">Could not load: ${e.message}</div>`;
+  }
+}
+
+// ─── DEPLOY WILL (from Setup page) ────────────────────────────────────────
+async function deployW() {
+  if (!walletConnected) { alert('Connect your wallet first.'); return; }
+  if (userWillAddress)  { alert('You already have a will deployed at:\n' + userWillAddress); return; }
+
+  // Collect beneficiaries from chips
+  const chips = document.querySelectorAll('#bChips .b-chip');
+  if (chips.length === 0) { alert('Add at least one beneficiary first.'); return; }
+
+  const wallets = [], shares = [], labels = [];
+  let totalShares = 0;
+  chips.forEach(chip => {
+    const text   = chip.textContent;
+    const addr   = chip.dataset.addr;
+    const share  = parseInt(chip.dataset.share);
+    const label  = chip.dataset.label || 'Beneficiary';
+    wallets.push(addr);
+    shares.push(share * 100); // convert % to bps
+    labels.push(label);
+    totalShares += share;
+  });
+
+  if (totalShares !== 100) { alert(`Shares must total 100%. Currently: ${totalShares}%`); return; }
+
+  const interval = parseInt(document.getElementById('intervalSelect').value);
+  const grace    = parseInt(document.getElementById('graceSelect').value);
+  const depositInput = parseFloat(document.getElementById('depositAmount').value || '0');
+  const depositWei   = depositInput > 0 ? ethers.parseEther(depositInput.toString()) : 0n;
+
+  try {
+    showToast('Deploying your will... confirm in MetaMask');
+    const tx = await factoryContract.createWill(wallets, shares, labels, interval, grace, { value: depositWei });
+    showToast('Transaction sent! Waiting for confirmation...');
+    const receipt = await tx.wait();
+
+    // Parse WillCreated event to get new contract address
+    const iface    = new ethers.Interface(FACTORY_ABI);
+    let newWillAddr = null;
+    for (const log of receipt.logs) {
+      try {
+        const parsed = iface.parseLog(log);
+        if (parsed.name === 'WillCreated') { newWillAddr = parsed.args.willContract; break; }
+      } catch {}
+    }
+
+    if (!newWillAddr) newWillAddr = await readFactory.getWill(walletAddress);
+
+    userWillAddress = newWillAddr;
+    const rp = new ethers.JsonRpcProvider(RPC_URL);
+    readWill    = new ethers.Contract(newWillAddr, WILL_ABI, rp);
+    willContract = new ethers.Contract(newWillAddr, WILL_ABI, signer);
+
+    showToast('✓ Will deployed! Address: ' + newWillAddr.slice(0,10) + '...');
+    showHasWillState();
+    showPage('dashboard', document.querySelector('.nav-item'));
+    await loadDashboard();
+  } catch(e) {
+    console.error(e);
+    showToast('Deploy failed: ' + (e.reason || e.message), true);
+  }
+}
+
+// ─── HEARTBEAT CARD ────────────────────────────────────────────────────────
+async function loadHeartbeatCard(secondsLeft, interval) {
+  const intNum    = Number(interval);
+  const totalSecs = intNum + Number(await readWill.gracePeriod());
+  const elapsed   = totalSecs - secondsLeft;
+  const pct       = Math.min(100, Math.round((elapsed / totalSecs) * 100));
+
+  // Progress bar + labels
+  const fill    = document.getElementById('hbProgFill');
+  const elLabel = document.getElementById('hbElapsed');
+  const ltLabel = document.getElementById('hbLeft');
+  const badge   = document.getElementById('hbBadge');
+
+  if (fill)    fill.style.width    = pct + '%';
+  if (elLabel) elLabel.textContent = pct + '% elapsed';
+  if (ltLabel) ltLabel.textContent = fmtSeconds(secondsLeft) + ' left';
+
+  if (badge) {
+    if (secondsLeft < 86400) {
+      badge.textContent = 'Due Soon'; badge.className = 'badge badge-warn';
+    } else {
+      badge.textContent = 'Active';   badge.className = 'badge badge-live';
+    }
+  }
+
+  // Pull recent Heartbeat events from chain
+  const hbHistory = document.getElementById('hbHistory');
+  if (!hbHistory) return;
+
+  try {
+    const rp   = new ethers.JsonRpcProvider(RPC_URL);
+    const rc   = new ethers.Contract(userWillAddress, WILL_ABI, rp);
+    const curr = await rp.getBlockNumber();
+    const from = Math.max(0, curr - 100000);
+    const events = await rc.queryFilter(rc.filters.Heartbeat(), from);
+    const sorted = [...events].sort((a,b) => b.blockNumber - a.blockNumber).slice(0, 4);
+
+    if (sorted.length === 0) {
+      hbHistory.innerHTML = `<div class="hb-row"><div class="hb-dot hb-off"></div><div class="hb-label" style="color:var(--muted);">No heartbeats yet — send your first one</div></div>`;
+      return;
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    hbHistory.innerHTML = sorted.map((ev, i) => {
+      const ts   = Number(ev.args?.timestamp || 0);
+      const ago  = ts ? timeAgo(ts, now) : 'unknown';
+      const isOn = i === 0;
+      return `<div class="hb-row">
+        <div class="hb-dot ${isOn ? 'hb-on' : 'hb-off'}"></div>
+        <div class="hb-label">Heartbeat sent</div>
+        <div class="hb-time">${ago}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    hbHistory.innerHTML = `<div style="font-size:12px;color:var(--muted);">Could not load heartbeat history.</div>`;
+  }
+}
+
+function timeAgo(ts, now) {
+  const diff = now - ts;
+  if (diff < 3600)   return Math.floor(diff/60)   + 'm ago';
+  if (diff < 86400)  return Math.floor(diff/3600)  + 'h ago';
+  if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
+  return Math.floor(diff/604800) + 'w ago';
+}
+
+// ─── NETWORK & DISCONNECT ──────────────────────────────────────────────────
+async function switchNetwork() {
+  if (typeof window.ethereum === 'undefined') {
+    alert('MetaMask not found.'); return;
+  }
+  try {
+    showToast('Switching to Polkadot Hub TestNet...');
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: CHAIN_ID_HEX }]
+    });
+    showToast('✓ Switched to Polkadot Hub TestNet!');
+  } catch(switchErr) {
+    // Code 4902 = chain not added yet
+    if (switchErr.code === 4902 || switchErr.code === -32603) {
+      try {
+        showToast('Adding Polkadot Hub TestNet to MetaMask...');
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: CHAIN_ID_HEX,
+            chainName: 'Polkadot Hub TestNet',
+            nativeCurrency: { name: 'PAS', symbol: 'PAS', decimals: 18 },
+            rpcUrls: [RPC_URL],
+            blockExplorerUrls: ['https://blockscout-testnet.polkadot.io/']
+          }]
+        });
+        showToast('✓ Polkadot Hub TestNet added & switched!');
+      } catch(addErr) {
+        showToast('Failed to add network: ' + (addErr.message || addErr), true);
+        return;
+      }
+    } else if (switchErr.code === 4001) {
+      showToast('Network switch rejected by user.', true);
+      return;
+    } else {
+      showToast('Switch failed: ' + (switchErr.message || switchErr), true);
+      return;
+    }
+  }
+  // Re-check after switch
+  await checkNetwork();
+  if (provider) await fetchWalletBalance();
+}
+
+async function checkNetwork() {
+  if (typeof window.ethereum === 'undefined') return;
+  try {
+    const rawChainId = await window.ethereum.request({ method: 'eth_chainId' });
+    // Normalize both to lowercase for safe comparison
+    const isCorrect = parseInt(rawChainId, 16) === CHAIN_ID;
+
+    const networkRow  = document.getElementById('networkRow');
+    const networkDot  = document.getElementById('networkDot');
+    const networkName = document.getElementById('networkName');
+    const switchHint  = document.getElementById('networkSwitchHint');
+    const wrongBtn    = document.getElementById('wrongNetworkBtn');
+
+    if (networkRow) networkRow.style.display = 'block';
+
+    if (isCorrect) {
+      if (networkDot)  networkDot.style.background = 'var(--green)';
+      if (networkName) { networkName.textContent = 'Polkadot Hub TestNet'; networkName.style.color = 'var(--green)'; }
+      if (switchHint)  switchHint.style.display   = 'none';
+      if (networkRow)  networkRow.style.borderColor = 'rgba(34,197,94,0.2)';
+      if (wrongBtn)    wrongBtn.style.display       = 'none';
+    } else {
+      if (networkDot)  networkDot.style.background = 'var(--amber)';
+      if (networkName) { networkName.textContent = 'Wrong Network — click to switch'; networkName.style.color = 'var(--amber)'; }
+      if (switchHint)  switchHint.style.display   = 'inline';
+      if (networkRow)  networkRow.style.borderColor = 'rgba(245,158,11,0.35)';
+      if (wrongBtn)    wrongBtn.style.display       = 'inline-flex';
+    }
+  } catch(e) { console.error('checkNetwork error', e); }
+}
+
+function disconnectWallet() {
+  // MetaMask doesn't have a true disconnect API — we reset our app state
+  walletConnected  = false;
+  walletAddress    = '';
+  provider         = null;
+  signer           = null;
+  factoryContract  = null;
+  willContract     = null;
+  readWill         = null;
+  userWillAddress  = null;
+  window._walletBalPAS = 0;
+
+  // Reset sidebar pill
+  document.getElementById('wpAddr').textContent   = 'Connect wallet →';
+  document.getElementById('wpStatus').textContent = 'Not connected';
+  document.getElementById('wpLed').classList.remove('live');
+  document.getElementById('walletPill').onclick   = connectWallet;
+
+  // Hide disconnect btn
+  document.getElementById('disconnectBtn').style.display = 'none';
+
+  // Reset topbar
+  const connectBtn = document.getElementById('connectBtn');
+  connectBtn.textContent  = 'Connect Wallet';
+  connectBtn.style.color  = '';
+  connectBtn.onclick      = connectWallet;
+
+  // Hide balance
+  const balDot = document.getElementById('walletBalDot');
+  const balEl  = document.getElementById('walletBalDisplay');
+  if (balDot) balDot.style.display = 'none';
+  if (balEl)  balEl.style.display  = 'none';
+
+  // Hide wrong network btn
+  const wrongBtn = document.getElementById('wrongNetworkBtn');
+  if (wrongBtn) wrongBtn.style.display = 'none';
+
+  // Hide network row
+  const networkRow = document.getElementById('networkRow');
+  if (networkRow) networkRow.style.display = 'none';
+
+  // Reset UI to no-will state
+  showNoWillState();
+  showToast('Wallet disconnected.');
+}
+
+// ─── WALLET BALANCE ────────────────────────────────────────────────────────
+async function fetchWalletBalance() {
+  if (!provider || !walletAddress) return;
+  try {
+    const raw = await provider.getBalance(walletAddress);
+    const bal = parseFloat(ethers.formatEther(raw));
+    const display = bal.toFixed(4) + ' PAS';
+
+    // Topbar
+    const dot = document.getElementById('walletBalDot');
+    const balEl = document.getElementById('walletBalDisplay');
+    if (dot)   { dot.style.display = 'inline-block'; }
+    if (balEl) { balEl.style.display = 'inline'; balEl.textContent = display; }
+
+    // Deposit modal
+    const modalBal = document.getElementById('modalWalletBal');
+    if (modalBal) modalBal.textContent = display;
+
+    // Store for MAX button
+    window._walletBalPAS = bal;
+  } catch(e) { console.error('balance fetch error', e); }
+}
+
+function useMaxDeposit() {
+  const bal = window._walletBalPAS || 0;
+  // Leave 0.01 PAS for gas
+  const safeMax = Math.max(0, bal - 0.01);
+  document.getElementById('depositModalAmount').value = safeMax.toFixed(4);
+}
+
+// ─── DEPOSIT MODAL ─────────────────────────────────────────────────────────
+function openDepositModal() {
+  if (!walletConnected || !willContract) {
+    showToast('Connect your wallet and deploy a will first.', true); return;
+  }
+  fetchWalletBalance();
+  document.getElementById('depositModal').classList.add('open');
+}
+
+async function depositPAS() {
+  const amount = parseFloat(document.getElementById('depositModalAmount').value);
+  if (!amount || amount <= 0) { showToast('Enter a valid amount.', true); return; }
+  closeM('depositModal');
+  try {
+    showToast('Depositing ' + amount + ' PAS... confirm in MetaMask');
+    const tx = await willContract.deposit({ value: ethers.parseEther(amount.toString()) });
+    await tx.wait();
+    showToast('✓ ' + amount + ' PAS deposited to your vault!');
+    await fetchWalletBalance();
+    await loadDashboard();
+  } catch(e) {
+    showToast('Deposit failed: ' + (e.reason || e.message), true);
+  }
+}
+
+// ─── HEARTBEAT ─────────────────────────────────────────────────────────────
+function openHB()   { document.getElementById('hbModal').classList.add('open'); }
+function closeM(id) { document.getElementById(id).classList.remove('open'); }
+
+async function sendHB() {
+  if (!walletConnected || !willContract) { closeM('hbModal'); alert('Connect wallet and deploy a will first.'); return; }
+  closeM('hbModal');
+  try {
+    showToast('Sending heartbeat... confirm in MetaMask');
+    const tx = await willContract.heartbeat();
+    showToast('Waiting for confirmation...');
+    await tx.wait();
+    showToast('♡ Heartbeat confirmed! Timer reset.');
+    await loadDashboard();
+  } catch(e) {
+    showToast('Error: ' + (e.reason || e.message || 'Transaction failed'), true);
+  }
+}
+
+// ─── REVOKE ────────────────────────────────────────────────────────────────
+async function revokeWill() {
+  if (!walletConnected || !willContract) { alert('Connect wallet first.'); return; }
+  if (!confirm('⚠ Permanently revoke your will and refund balance?\n\nThis CANNOT be undone.')) return;
+  try {
+    showToast('Revoking... confirm in MetaMask');
+    const tx = await willContract.revoke();
+    await tx.wait();
+    userWillAddress = null; willContract = null; readWill = null;
+    showToast('Will revoked. Balance refunded.');
+    showNoWillState();
+  } catch(e) { showToast('Error: ' + (e.reason || e.message), true); }
+}
+
+// ─── STEPPER ───────────────────────────────────────────────────────────────
+function goStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('sp'+i).style.display = i===n ? 'block' : 'none';
+    const num = document.getElementById('sn'+i);
+    const lbl = document.getElementById('sl'+i);
+    if (i < n) {
+      num.className='step-num sn-done'; lbl.className='step-label sl-done';
+      if(document.getElementById('st'+i)) document.getElementById('st'+i).className='step-tab s-done';
+    } else if (i === n) {
+      num.className='step-num sn-active'; lbl.className='step-label sl-active';
+      if(document.getElementById('st'+i)) document.getElementById('st'+i).className='step-tab s-active';
+    } else {
+      num.className='step-num sn-idle'; lbl.className='step-label sl-idle';
+      if(document.getElementById('st'+i)) document.getElementById('st'+i).className='step-tab';
+    }
+  });
+}
+
+// ─── OPEN EXPLORER ─────────────────────────────────────────────────────────
+function openExplorer() {
+  if (!userWillAddress) { alert('No will deployed yet.'); return; }
+  window.open(EXPLORER + '/address/' + userWillAddress, '_blank');
+}
+
+// ─── REVIEW SUMMARY ────────────────────────────────────────────────────────
+function reviewSummary() {
+  const chips    = document.querySelectorAll('#bChips .b-chip');
+  const interval = document.getElementById('intervalSelect');
+  const grace    = document.getElementById('graceSelect');
+  const deposit  = document.getElementById('depositAmount')?.value || '0';
+
+  const el = id => document.getElementById(id);
+  if (el('reviewBenes'))    el('reviewBenes').textContent    = chips.length + ' wallet' + (chips.length !== 1 ? 's' : '');
+  if (el('reviewInterval')) el('reviewInterval').textContent = interval ? interval.options[interval.selectedIndex].text.replace('Every ','') : '—';
+  if (el('reviewGrace'))    el('reviewGrace').textContent    = grace    ? grace.options[grace.selectedIndex].text.replace(' after missed heartbeat','') : '—';
+  if (el('reviewDeposit'))  el('reviewDeposit').textContent  = (parseFloat(deposit)||0).toFixed(3) + ' PAS';
+}
+
+// ─── ADD BENEFICIARY CHIP ──────────────────────────────────────────────────
+function addB() {
+  const a = document.getElementById('bAddr').value.trim();
+  const s = document.getElementById('bShare').value.trim();
+  const l = document.getElementById('bLabel').value.trim() || 'Beneficiary';
+  if (!a || !s) { alert('Enter address and share %'); return; }
+  if (!a.startsWith('0x') || a.length !== 42) { alert('Invalid wallet address'); return; }
+  const sa = a.slice(0,6)+'...'+a.slice(-4);
+  const ch = document.createElement('div');
+  ch.className = 'b-chip';
+  ch.dataset.addr  = a;
+  ch.dataset.share = s;
+  ch.dataset.label = l;
+  ch.innerHTML = `${l} · ${sa} <span style="color:var(--pk-pink);">${s}%</span> <span class="chip-x" onclick="this.parentElement.remove()">×</span>`;
+  document.getElementById('bChips').appendChild(ch);
+  document.getElementById('bAddr').value = '';
+  document.getElementById('bShare').value = '';
+  document.getElementById('bLabel').value = '';
+}
+
+// ─── AI LAST MESSAGE ───────────────────────────────────────────────────────
+async function genMsg() {
+  const raw = document.getElementById('msgInput').value.trim();
+  const box = document.getElementById('msgAI');
+  if (!raw) { alert('Write some rough notes first.'); return; }
+  box.style.display = 'block';
+  box.innerHTML = `<div class="ai-wrap"><div class="ai-header"><div class="ai-led"></div><div class="ai-tag">AI Writing...</div></div><div class="loader"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div></div>`;
+  try {
+    const GEMINI_KEY = 'AIzaSyDKWLXTybmcKxvxuxagKofCWWGS2be3Lfg';
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: `You are helping someone write a final message to their loved ones stored on-chain as part of their crypto inheritance will. This message will only be read after they pass away.\n\nTheir rough notes:\n"${raw}"\n\nRewrite this as a warm, clear, heartfelt final message. Personal and genuine — not formal. Include practical info from their notes. Under 200 words. Return ONLY the message text.` }]
+        }]
+      })
+    });
+    const d = await r.json();
+    console.log('Gemini response:', JSON.stringify(d));
+    const msg = d?.candidates?.[0]?.content?.parts?.[0]?.text
+      || d?.candidates?.[0]?.output
+      || d?.text
+      || d?.error?.message
+      || 'Could not generate.';
+    box.innerHTML = `<div class="ai-wrap"><div class="ai-header"><div class="ai-led"></div><div class="ai-tag">AI Suggestion</div></div><div class="ai-body">${msg.replace(/\n/g,'<br/>')}</div><div style="margin-top:12px;display:flex;gap:8px;"><button class="btn btn-outline-pink btn-xs" onclick="useMsg(this)">Use this →</button><button class="btn btn-ghost btn-xs" onclick="genMsg()">Regenerate</button></div></div>`;
+  } catch {
+    box.innerHTML = `<div class="ai-wrap"><div class="ai-body" style="color:var(--muted);">AI unavailable — add your Gemini API key to enable.</div></div>`;
+  }
+}
+function useMsg(btn) {
+  const t = btn.closest('.ai-wrap').querySelector('.ai-body')?.innerText;
+  if (t) document.getElementById('msgInput').value = t;
+}
+
+// ─── ENCRYPTION (AES-256-GCM via Web Crypto API) ───────────────────────────
+
+async function deriveKey(password, salt) {
+  const enc      = new TextEncoder();
+  const keyMat   = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    keyMat,
+    { name: 'AES-GCM', length: 256 },
+    false, ['encrypt', 'decrypt']
+  );
+}
+
+async function encryptAndSave() {
+  const msg  = document.getElementById('msgInput').value.trim();
+  const pass = document.getElementById('encPassword').value.trim();
+
+  if (!msg)  { showToast('Write your message first.', true); return; }
+  if (!pass) { showToast('Enter an encryption password.', true); return; }
+
+  try {
+    const enc   = new TextEncoder();
+    const salt  = crypto.getRandomValues(new Uint8Array(16));
+    const iv    = crypto.getRandomValues(new Uint8Array(12));
+    const key   = await deriveKey(pass, salt);
+
+    const encrypted = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      key,
+      enc.encode(msg)
+    );
+
+    // Pack: salt(16) + iv(12) + ciphertext → base64
+    const combined = new Uint8Array(16 + 12 + encrypted.byteLength);
+    combined.set(salt, 0);
+    combined.set(iv, 16);
+    combined.set(new Uint8Array(encrypted), 28);
+
+    const b64 = btoa(String.fromCharCode(...combined));
+    const payload = 'DOTWILL_ENC_V1:' + b64;
+
+    // Show output
+    document.getElementById('encryptedText').textContent    = payload;
+    document.getElementById('encryptedOutput').style.display = 'block';
+    document.getElementById('msgStatusBadge').textContent   = 'Encrypted';
+    document.getElementById('msgStatusBadge').className     = 'badge badge-live';
+
+    // Save to localStorage for convenience
+    localStorage.setItem('dotwill_encrypted_msg', payload);
+
+    showToast('✓ Message encrypted with AES-256-GCM. Copy or download it.');
+  } catch(e) {
+    showToast('Encryption failed: ' + e.message, true);
+  }
+}
+
+async function decryptMessage() {
+  const payload = document.getElementById('decryptInput').value.trim();
+  const pass    = document.getElementById('decPassword').value.trim();
+
+  if (!payload || !pass) { showToast('Paste the encrypted message and enter the password.', true); return; }
+  if (!payload.startsWith('DOTWILL_ENC_V1:')) { showToast('Invalid encrypted message format.', true); return; }
+
+  try {
+    const b64      = payload.replace('DOTWILL_ENC_V1:', '');
+    const bytes    = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const salt     = bytes.slice(0, 16);
+    const iv       = bytes.slice(16, 28);
+    const data     = bytes.slice(28);
+    const key      = await deriveKey(pass, salt);
+
+    const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+    const text      = new TextDecoder().decode(decrypted);
+
+    document.getElementById('decryptedText').textContent     = text;
+    document.getElementById('decryptedOutput').style.display = 'block';
+    showToast('✓ Message decrypted successfully.');
+  } catch(e) {
+    showToast('Decryption failed — wrong password or corrupted message.', true);
+    document.getElementById('decryptedOutput').style.display = 'none';
+  }
+}
+
+function copyEncrypted() {
+  const text = document.getElementById('encryptedText').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard.'));
+}
+
+function downloadEncrypted() {
+  const text     = document.getElementById('encryptedText').textContent;
+  const blob     = new Blob([text], { type: 'text/plain' });
+  const url      = URL.createObjectURL(blob);
+  const a        = document.createElement('a');
+  a.href         = url;
+  a.download     = 'dotwill-last-message.enc.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Downloaded encrypted message file.');
+}
+
+// ─── SAVE MESSAGE HASH ─────────────────────────────────────────────────────
+async function saveMessageHash() {
+  const msg = document.getElementById('msgInput').value.trim();
+  if (!msg) { alert('Write a message first.'); return; }
+  if (!walletConnected || !willContract) { alert('Connect wallet and deploy a will first.'); return; }
+  try {
+    const hash = ethers.keccak256(ethers.toUtf8Bytes(msg));
+    showToast('Saving hash on-chain... confirm in MetaMask');
+    const tx = await willContract.setMessageHash(hash);
+    await tx.wait();
+    showToast('✓ Message hash saved. Hash: ' + hash.slice(0,10) + '...');
+  } catch(e) { showToast('Error: ' + (e.reason || e.message), true); }
+}
+
+// ─── COUNTDOWN ─────────────────────────────────────────────────────────────
+function startCountdown(secondsLeft) {
+  if (countdownTimer) clearInterval(countdownTimer);
+  let remaining = secondsLeft;
+  function tick() {
+    if (remaining <= 0) { document.getElementById('countdown').textContent = '00:00:00:00'; clearInterval(countdownTimer); return; }
+    const dd=Math.floor(remaining/86400), hh=Math.floor((remaining%86400)/3600),
+          mm=Math.floor((remaining%3600)/60), ss=remaining%60;
+    document.getElementById('countdown').textContent = [dd,hh,mm,ss].map(x=>String(x).padStart(2,'0')).join(':');
+    remaining--;
+  }
+  tick(); countdownTimer = setInterval(tick, 1000);
+}
+
+// ─── TOAST ─────────────────────────────────────────────────────────────────
+function showToast(msg, isError=false) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div'); t.id = 'toast';
+    t.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:999;padding:12px 18px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;max-width:340px;border:0.5px solid;transition:opacity 0.3s;`;
+    document.body.appendChild(t);
+  }
+  t.style.background  = isError ? 'var(--red-dim)'        : 'var(--surface2)';
+  t.style.borderColor = isError ? 'rgba(239,68,68,0.3)'   : 'var(--border-pink)';
+  t.style.color       = isError ? 'var(--red)'            : 'var(--text)';
+  t.style.opacity     = '1'; t.textContent = msg;
+  setTimeout(() => { t.style.opacity = '0'; }, 4000);
+}
+
+// ─── HELPERS ───────────────────────────────────────────────────────────────
+function fmtInterval(secs) {
+  const s = Number(secs);
+  if (s >= 86400) return (s/86400).toFixed(0)+' days';
+  if (s >= 3600)  return (s/3600).toFixed(0)+' hours';
+  return s+' seconds';
+}
+function fmtSeconds(s) {
+  const d=Math.floor(s/86400), h=Math.floor((s%86400)/3600);
+  return d > 0 ? `${d}d ${h}h` : `${h}h`;
+}
+function fmtTimestamp(ts) {
+  if (!ts || ts === 0n) return 'Never';
+  return new Date(Number(ts)*1000).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+
+// ─── CLOSE OVERLAYS ────────────────────────────────────────────────────────
+document.querySelectorAll('.overlay').forEach(o =>
+  o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); })
+);
+
+// ─── START ─────────────────────────────────────────────────────────────────
+boot();
+</script>
+</body>
+</html>
