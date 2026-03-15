@@ -16,39 +16,39 @@
   --pk-white:      #FFFFFF;
 
   /* ── App Surface Scale (dark) ── */
-  --bg:            #090909;
-  --surface:       #111111;
-  --surface2:      #191919;
-  --surface3:      #222222;
-  --border:        rgba(255,255,255,0.07);
-  --border2:       rgba(255,255,255,0.12);
-  --border-pink:   rgba(230,0,122,0.25);
+  --bg:            #08080d;
+  --surface:       #0f0f17;
+  --surface2:      #16161f;
+  --surface3:      #1e1e28;
+  --border:        rgba(255,255,255,0.08);
+  --border2:       rgba(255,255,255,0.14);
+  --border-pink:   rgba(230,0,122,0.28);
 
   /* ── Pink derived ── */
-  --pink-dim:      rgba(230,0,122,0.10);
-  --pink-glow:     rgba(230,0,122,0.05);
-  --pink-strong:   rgba(230,0,122,0.18);
+  --pink-dim:      rgba(230,0,122,0.12);
+  --pink-glow:     rgba(230,0,122,0.06);
+  --pink-strong:   rgba(230,0,122,0.20);
 
   /* ── Semantic ── */
-  --green:         #22c55e;
-  --green-dim:     rgba(34,197,94,0.10);
-  --amber:         #f59e0b;
-  --amber-dim:     rgba(245,158,11,0.10);
-  --red:           #ef4444;
-  --red-dim:       rgba(239,68,68,0.10);
+  --green:         #2dd865;
+  --green-dim:     rgba(45,216,101,0.12);
+  --amber:         #fbbf24;
+  --amber-dim:     rgba(251,191,36,0.12);
+  --red:           #f87171;
+  --red-dim:       rgba(248,113,113,0.12);
 
-  /* ── Text ── */
-  --text:          #F0F0F0;
-  --muted:         #aaaabc;
-  --muted2:        #555570;
+  /* ── Text — boosted contrast ── */
+  --text:          #ffffff;
+  --muted:         #c0c0d8;
+  --muted2:        #6b6b88;
 
   /* ── Pink tones for readability ── */
-  --pk-pink-label: rgba(230,0,122,0.70);  /* soft pink for small labels */
-  --pk-pink-mid:   rgba(230,0,122,0.88);  /* mid pink for secondary values */
+  --pk-pink-label: rgba(230,0,122,0.85);
+  --pk-pink-mid:   rgba(230,0,122,0.95);
 
-  --sidebar-w:     230px;
-  --radius:        10px;
-  --radius-sm:     7px;
+  --sidebar-w:     240px;
+  --radius:        12px;
+  --radius-sm:     8px;
 }
 
 body {
@@ -103,8 +103,8 @@ body {
 }
 .nav-item {
   display: flex; align-items: center; gap: 10px;
-  padding: 10px 10px; border-radius: var(--radius-sm);
-  font-size: 13.5px; font-weight: 400; color: var(--muted);
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 400; color: var(--muted);
   cursor: pointer; transition: all 0.12s;
   margin-bottom: 2px; border: 0.5px solid transparent;
   user-select: none; line-height: 1.3;
@@ -210,33 +210,33 @@ body {
 .page-eyebrow::after { content: ''; flex: 0 0 20px; height: 0.5px; background: var(--pk-pink-label); }
 .page-title {
   font-family: 'Unbounded', sans-serif;
-  font-weight: 700; font-size: 22px;
+  font-weight: 700; font-size: 26px;
   color: var(--text); letter-spacing: -0.03em;
-  margin-bottom: 4px; line-height: 1.2;
+  margin-bottom: 6px; line-height: 1.2;
 }
-.page-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+.page-sub { font-size: 15px; color: var(--muted); margin-bottom: 32px; line-height: 1.65; }
 
 /* ─── CARDS ───────────────────────────────────────────── */
 .card {
   background: var(--surface);
   border: 0.5px solid var(--border);
-  border-radius: var(--radius); padding: 20px;
+  border-radius: var(--radius); padding: 22px;
 }
 .card-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 .card-title {
   font-family: 'DM Mono', monospace;
-  font-size: 11px; font-weight: 500;
+  font-size: 12px; font-weight: 500;
   color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
 }
 .card-accent { border-left: 2px solid var(--pk-pink); padding-left: 16px; }
 
 /* ─── STATUS BANNER ───────────────────────────────────── */
 .status-banner {
-  border-radius: var(--radius); padding: 18px 22px;
-  margin-bottom: 22px;
+  border-radius: var(--radius); padding: 20px 24px;
+  margin-bottom: 24px;
   display: flex; align-items: center; justify-content: space-between;
   border: 0.5px solid;
   position: relative; overflow: hidden;
@@ -245,55 +245,55 @@ body {
   content: ''; position: absolute;
   left: 0; top: 0; bottom: 0; width: 3px;
 }
-.banner-safe { background: var(--green-dim); border-color: rgba(34,197,94,0.2); }
+.banner-safe { background: var(--green-dim); border-color: rgba(45,216,101,0.2); }
 .banner-safe::before { background: var(--green); }
-.banner-warn { background: var(--amber-dim); border-color: rgba(245,158,11,0.2); }
+.banner-warn { background: var(--amber-dim); border-color: rgba(251,191,36,0.2); }
 .banner-warn::before { background: var(--amber); }
 .banner-info { background: var(--pink-dim); border-color: var(--border-pink); }
 .banner-info::before { background: var(--pk-pink); }
 
 .banner-label {
   font-family: 'DM Mono', monospace;
-  font-size: 12px; font-weight: 500; letter-spacing: 0.12em;
-  text-transform: uppercase; margin-bottom: 4px;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 5px;
 }
-.banner-value { font-size: 13px; color: var(--text); font-weight: 500; }
+.banner-value { font-size: 14px; color: var(--text); font-weight: 500; }
 .countdown {
   font-family: 'DM Mono', monospace;
-  font-size: 20px; color: var(--pk-pink); font-weight: 500;
+  font-size: 22px; color: var(--pk-pink); font-weight: 500;
   letter-spacing: 0.06em;
 }
 
 /* ─── STAT GRID ───────────────────────────────────────── */
 .stats-grid {
-  display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-bottom: 22px;
+  display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-bottom: 24px;
 }
 .stat-card {
-  background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px 18px;
+  background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 20px;
 }
 .stat-label {
   font-family: 'DM Mono', monospace;
-  font-size: 12px; font-weight: 500; letter-spacing: 0.12em;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
 }
-.stat-value { font-size: 21px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-.stat-sub { font-size: 12px; color: var(--muted); }
+.stat-value { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.stat-sub { font-size: 13px; color: var(--muted); }
 .stat-pink { color: var(--pk-pink); }
 .stat-green { color: var(--green); }
 
 /* ─── TWO COL ─────────────────────────────────────────── */
-.two-col { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-bottom: 22px; }
+.two-col { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; margin-bottom: 24px; }
 
 /* ─── HEARTBEAT ITEMS ─────────────────────────────────── */
-.hb-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.hb-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.hb-on  { background: var(--pk-pink); box-shadow: 0 0 6px rgba(230,0,122,0.5); }
+.hb-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.hb-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.hb-on  { background: var(--pk-pink); box-shadow: 0 0 8px rgba(230,0,122,0.6); }
 .hb-off { background: var(--muted2); }
-.hb-label { font-size: 13px; color: var(--text); flex: 1; }
+.hb-label { font-size: 14px; color: var(--text); flex: 1; }
 .hb-time  { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
 
 /* progress */
-.prog-track { height: 3px; border-radius: 2px; background: var(--surface3); margin-top: 14px; overflow: hidden; }
+.prog-track { height: 4px; border-radius: 2px; background: var(--surface3); margin-top: 16px; overflow: hidden; }
 .prog-fill   { height: 100%; background: var(--pk-pink); border-radius: 2px; }
 
 /* ─── BENEFICIARY ─────────────────────────────────────── */
@@ -310,9 +310,9 @@ body {
   font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
   color: var(--pk-pink); flex-shrink: 0;
 }
-.bene-name  { font-size: 13px; font-weight: 500; color: var(--text); }
+.bene-name  { font-size: 14px; font-weight: 500; color: var(--text); }
 .bene-addr  { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
-.bene-share { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--pk-pink); font-weight: 500; }
+.bene-share { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--pk-pink); font-weight: 500; }
 
 /* ─── ASSET ROW ───────────────────────────────────────── */
 .asset-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
@@ -429,7 +429,7 @@ select.form-input { cursor: pointer; }
 .tl-green { background: var(--green-dim); border: 0.5px solid rgba(34,197,94,0.3); }
 .tl-gray  { background: var(--surface2);  border: 0.5px solid var(--border2); }
 .tl-content { flex: 1; padding-top: 3px; }
-.tl-event { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.tl-event { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
 .tl-time  { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
 .tl-detail { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.55; }
 
@@ -764,7 +764,7 @@ select.form-input { cursor: pointer; }
     <div class="topbar-right">
       <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;" id="walletBalDot" style="display:none;"></span>
-        <span id="walletBalDisplay" style="display:none;">— PAS</span>
+        <span id="walletBalDisplay" style="display:none;">0 PAS</span>
       </div>
       <!-- Wrong network warning -->
       <button id="wrongNetworkBtn" onclick="switchNetwork()" style="display:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:6px 12px;border-radius:7px;background:var(--amber-dim);border:0.5px solid rgba(245,158,11,0.3);color:var(--amber);cursor:pointer;">
@@ -816,13 +816,13 @@ select.form-input { cursor: pointer; }
       </div>
       <div class="stat-card">
         <div class="stat-label">Beneficiaries</div>
-        <div class="stat-value" id="statBenes">—</div>
+        <div class="stat-value" id="statBenes">0</div>
         <div class="stat-sub">Registered on-chain</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Interval</div>
-        <div class="stat-value stat-green" id="statInterval">—</div>
-        <div class="stat-sub" id="statLastHB">Last: —</div>
+        <div class="stat-value stat-green" id="statInterval">Loading</div>
+        <div class="stat-sub" id="statLastHB">Last: loading</div>
       </div>
     </div>
 
@@ -840,8 +840,8 @@ select.form-input { cursor: pointer; }
         </div>
         <div class="prog-track"><div class="prog-fill" id="hbProgFill" style="width:0%;"></div></div>
         <div style="display:flex;justify-content:space-between;margin-top:7px;">
-          <span style="font-size:12px;color:var(--muted);" id="hbElapsed">— elapsed</span>
-          <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pk-pink);" id="hbLeft">—</span>
+          <span style="font-size:12px;color:var(--muted);" id="hbElapsed">...</span>
+          <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--pk-pink);" id="hbLeft">...</span>
         </div>
       </div>
 
@@ -970,9 +970,9 @@ select.form-input { cursor: pointer; }
         <div style="background:var(--surface2);border-radius:8px;padding:14px;margin-bottom:14px;">
           <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.12em;margin-bottom:10px;">SUMMARY</div>
           <div style="font-size:13px;display:flex;flex-direction:column;gap:8px;">
-            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Beneficiaries</span><span id="reviewBenes">—</span></div>
-            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Interval</span><span id="reviewInterval">—</span></div>
-            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Grace period</span><span id="reviewGrace">—</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Beneficiaries</span><span id="reviewBenes">...</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Interval</span><span id="reviewInterval">...</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Grace period</span><span id="reviewGrace">...</span></div>
             <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Initial deposit</span><span id="reviewDeposit" style="color:var(--pk-pink);">0.000 PAS</span></div>
             <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Network</span><span style="color:var(--pk-pink);">Polkadot Hub TestNet</span></div>
           </div>
@@ -1017,27 +1017,27 @@ select.form-input { cursor: pointer; }
             <div style="width:26px;height:26px;border-radius:50%;background:var(--pk-pink);color:#fff;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
             <div>
               <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;">Write & encrypt your message</div>
-              <div style="font-size:13px;color:var(--muted);line-height:1.6;">Set a strong password and encrypt your message. A file downloads to your device — this is your encrypted message.</div>
+              <div style="font-size:13px;color:var(--muted);line-height:1.6;">Set a strong password and encrypt your message. A file downloads to your device, your encrypted message.</div>
             </div>
           </div>
           <div style="display:flex;gap:14px;align-items:flex-start;">
             <div style="width:26px;height:26px;border-radius:50%;background:var(--pk-pink);color:#fff;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
             <div>
               <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;">Send the encrypted file to your beneficiaries now</div>
-              <div style="font-size:13px;color:var(--muted);line-height:1.6;">Email them the file today. They <strong style="color:var(--text);">cannot read it</strong> — it's encrypted. Without the password it's just random characters. The encryption is the time-lock.</div>
+              <div style="font-size:13px;color:var(--muted);line-height:1.6;">Email them the file today. They <strong style="color:var(--text);">cannot read it</strong>, it's encrypted. Without the password it's just random characters. The encryption is the time-lock.</div>
             </div>
           </div>
           <div style="display:flex;gap:14px;align-items:flex-start;">
             <div style="width:26px;height:26px;border-radius:50%;background:var(--pk-pink);color:#fff;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
             <div>
               <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;">Keep the password secret while you're alive</div>
-              <div style="font-size:13px;color:var(--muted);line-height:1.6;">Store the password in a sealed physical envelope, with your lawyer, or in a safe. Your beneficiaries find it only after you're gone. They come back here, paste the file contents, enter the password — message unlocked.</div>
+              <div style="font-size:13px;color:var(--muted);line-height:1.6;">Store the password in a sealed physical envelope, with your lawyer, or in a safe. Your beneficiaries find it only after you're gone. They come back here, paste the file contents, enter the password. Message unlocked.</div>
             </div>
           </div>
         </div>
         <div style="margin-top:16px;padding:12px;background:var(--surface2);border-radius:8px;border:0.5px solid var(--border);">
           <div style="font-size:12px;color:var(--muted);line-height:1.6;">
-            This is exactly how every professional digital will service works — Safewill, Trust & Will, Tomorrow. The encryption is the protection, not the timing. Simple, trustless, no middleman.
+            This is exactly how every professional digital will service works: Safewill, Trust & Will, Tomorrow. The encryption is the protection, not the timing. Simple, trustless, no middleman.
           </div>
         </div>
       </div>
@@ -1048,7 +1048,7 @@ select.form-input { cursor: pointer; }
           <span class="card-title">Your Message</span>
           <span class="badge badge-draft" id="msgStatusBadge">Draft</span>
         </div>
-        <textarea class="form-input" id="msgInput" placeholder="Write anything — where your hardware wallet is, passwords, what matters to you, who to contact, how to claim your assets, what you want them to know..." style="min-height:160px;"></textarea>
+        <textarea class="form-input" id="msgInput" placeholder="Write anything: where your hardware wallet is, passwords, what matters to you, who to contact, how to claim your assets, what you want them to know..." style="min-height:160px;"></textarea>
       </div>
 
       <!-- AI Polish -->
@@ -1065,7 +1065,7 @@ select.form-input { cursor: pointer; }
         </div>
         <div class="form-group" style="margin-bottom:16px;">
           <label class="form-label">Encryption Password</label>
-          <input class="form-input" id="encPassword" type="password" placeholder="Choose a strong password — this is what your beneficiaries will need..." />
+          <input class="form-input" id="encPassword" type="password" placeholder="Choose a strong password. This is what your beneficiaries will need..." />
           <div class="form-hint">Do not share this password digitally. Write it on paper and store it somewhere your beneficiaries will find after you're gone.</div>
         </div>
         <button class="btn btn-pink" onclick="encryptAndDownload()">🔒 Encrypt & Download File</button>
@@ -1078,7 +1078,7 @@ select.form-input { cursor: pointer; }
           <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
             <button class="btn btn-pink btn-sm" onclick="downloadEncrypted()">↓ Download Again</button>
             <button class="btn btn-ghost btn-sm" onclick="copyEncrypted()">Copy Text</button>
-            <span style="font-size:12px;color:var(--green);">✓ File downloaded — now email it to your beneficiaries</span>
+            <span style="font-size:12px;color:var(--green);">✓ File downloaded. Email it to your beneficiaries</span>
           </div>
         </div>
       </div>
@@ -1134,11 +1134,11 @@ select.form-input { cursor: pointer; }
         <div style="font-family:'DM Mono',monospace;font-size:12px;display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Address</span><a id="willContractLink" href="#" target="_blank" style="color:var(--pk-pink);text-decoration:none;">—</a></div>
           <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Network</span><span>Polkadot Hub TestNet</span></div>
-          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Owner</span><span id="willOwner">—</span></div>
-          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Interval</span><span id="willInterval">—</span></div>
-          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Grace Period</span><span id="willGrace">—</span></div>
-          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Last Heartbeat</span><span id="willLastHB" style="color:var(--green);">—</span></div>
-          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Status</span><span id="willStatus">—</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Owner</span><span id="willOwner">Loading</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Interval</span><span id="willInterval">Loading</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Grace Period</span><span id="willGrace">Loading</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Last Heartbeat</span><span id="willLastHB" style="color:var(--green);">Loading</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Status</span><span id="willStatus">Loading</span></div>
         </div>
       </div>
       <div style="display:flex;gap:10px;">
@@ -1169,7 +1169,7 @@ select.form-input { cursor: pointer; }
       </div>
       <div style="display:flex;justify-content:space-between;margin-top:7px;">
         <div class="form-hint" style="margin-top:0;">Keep some PAS for gas fees.</div>
-        <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Wallet: <span id="modalWalletBal" style="color:var(--text);">—</span>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);">Wallet: <span id="modalWalletBal" style="color:var(--text);">Loading</span>
           <button onclick="useMaxDeposit()" style="background:none;border:none;color:var(--pk-pink);font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;padding:0 0 0 6px;">MAX</button>
         </div>
       </div>
@@ -1588,12 +1588,12 @@ function showNoWillState() {
 
   // Clear stats
   document.getElementById('statBalance').textContent  = '0.0000 PAS';
-  document.getElementById('statInterval').textContent = '—';
+  document.getElementById('statInterval').textContent = "...";
   document.getElementById('statLastHB').textContent   = 'Never';
 
   // Clear beneficiary list
   const beneList = document.getElementById('beneList');
-  if (beneList) beneList.innerHTML = `<div style="color:var(--muted);font-size:13px;padding:8px 0;">No beneficiaries — set up your will first.</div>`;
+  if (beneList) beneList.innerHTML = `<div style="color:var(--muted);font-size:13px;padding:8px 0;">No beneficiaries yet. Set up your will first.</div>`;
   const distBar = document.getElementById('distBar');
   if (distBar) distBar.innerHTML = '';
   const distLabels = document.getElementById('distLabels');
@@ -1650,7 +1650,7 @@ function updateBanner(isTriggered, isRevoked, secondsLeft) {
     value.textContent = 'This will has been permanently revoked.';
   } else if (isTriggered) {
     banner.className = 'status-banner banner-warn';
-    label.textContent = 'Will Triggered — Claims Open'; label.style.color = 'var(--amber)';
+    label.textContent = 'Will Triggered. Claims Open'; label.style.color = 'var(--amber)';
     value.textContent = 'Deadline was missed. Beneficiaries can now claim.';
   } else if (secondsLeft < 86400) {
     banner.className = 'status-banner banner-warn';
@@ -1762,8 +1762,8 @@ async function loadHistory() {
       const label = {
         heartbeat: 'Heartbeat sent',
         triggered: 'Will triggered',
-        claim:     `Claimed — ${ethers.formatEther(ev.data.args?.amount||0n).slice(0,6)} PAS`,
-        deposit:   `Deposited — ${ethers.formatEther(ev.data.args?.amount||0n).slice(0,6)} PAS`,
+        claim:     `Claimed: ${ethers.formatEther(ev.data.args?.amount||0n).slice(0,6)} PAS`,
+        deposit:   `Deposited: ${ethers.formatEther(ev.data.args?.amount||0n).slice(0,6)} PAS`,
       }[ev.type];
       const txHash = ev.data.transactionHash;
       const short  = txHash ? txHash.slice(0,8)+'...'+txHash.slice(-6) : '';
@@ -1882,7 +1882,7 @@ async function loadHeartbeatCard(secondsLeft, interval) {
     const sorted = [...events].sort((a,b) => b.blockNumber - a.blockNumber).slice(0, 4);
 
     if (sorted.length === 0) {
-      hbHistory.innerHTML = `<div class="hb-row"><div class="hb-dot hb-off"></div><div class="hb-label" style="color:var(--muted);">No heartbeats yet — send your first one</div></div>`;
+      hbHistory.innerHTML = `<div class="hb-row"><div class="hb-dot hb-off"></div><div class="hb-label" style="color:var(--muted);">No heartbeats yet. Send your first one</div></div>`;
       return;
     }
 
@@ -1978,7 +1978,7 @@ async function checkNetwork() {
       if (wrongBtn)    wrongBtn.style.display       = 'none';
     } else {
       if (networkDot)  networkDot.style.background = 'var(--amber)';
-      if (networkName) { networkName.textContent = 'Wrong Network — click to switch'; networkName.style.color = 'var(--amber)'; }
+      if (networkName) { networkName.textContent = 'Wrong Network. Click to switch'; networkName.style.color = 'var(--amber)'; }
       if (switchHint)  switchHint.style.display   = 'inline';
       if (networkRow)  networkRow.style.borderColor = 'rgba(245,158,11,0.35)';
       if (wrongBtn)    wrongBtn.style.display       = 'inline-flex';
@@ -2109,8 +2109,8 @@ function reviewSummary() {
 
   const el = id => document.getElementById(id);
   if (el('reviewBenes'))    el('reviewBenes').textContent    = chips.length + ' wallet' + (chips.length !== 1 ? 's' : '');
-  if (el('reviewInterval')) el('reviewInterval').textContent = interval ? interval.options[interval.selectedIndex].text.replace('Every ','') : '—';
-  if (el('reviewGrace'))    el('reviewGrace').textContent    = grace    ? grace.options[grace.selectedIndex].text.replace(' after missed heartbeat','') : '—';
+  if (el('reviewInterval')) el('reviewInterval').textContent = interval ? interval.options[interval.selectedIndex].text.replace('Every ','') : '...';
+  if (el('reviewGrace'))    el('reviewGrace').textContent    = grace    ? grace.options[grace.selectedIndex].text.replace(' after missed heartbeat','') : '...';
   if (el('reviewDeposit'))  el('reviewDeposit').textContent  = (parseFloat(deposit)||0).toFixed(3) + ' PAS';
 }
 
@@ -2151,7 +2151,7 @@ async function genMsg() {
     const msg = d?.message || d?.error || 'Could not generate.';
     box.innerHTML = `<div class="ai-wrap"><div class="ai-header"><div class="ai-led"></div><div class="ai-tag">AI Suggestion</div></div><div class="ai-body">${msg.replace(/\n/g,'<br/>')}</div><div style="margin-top:12px;display:flex;gap:8px;"><button class="btn btn-outline-pink btn-xs" onclick="useMsg(this)">Use this →</button><button class="btn btn-ghost btn-xs" onclick="genMsg()">Regenerate</button></div></div>`;
   } catch {
-    box.innerHTML = `<div class="ai-wrap"><div class="ai-body" style="color:var(--muted);">AI unavailable — add your Gemini API key to enable.</div></div>`;
+    box.innerHTML = `<div class="ai-wrap"><div class="ai-body" style="color:var(--muted);">AI unavailable. add your Gemini API key to enable.</div></div>`;
   }
 }
 function useMsg(btn) {
@@ -2259,7 +2259,7 @@ async function decryptMessage() {
     document.getElementById('decryptedOutput').style.display = 'block';
     showToast('✓ Message decrypted successfully.');
   } catch(e) {
-    showToast('Decryption failed — wrong password or corrupted message.', true);
+    showToast('Decryption failed. wrong password or corrupted message.', true);
     document.getElementById('decryptedOutput').style.display = 'none';
   }
 }
@@ -2306,7 +2306,7 @@ async function fetchMessageFromContract() {
 
   } catch(e) {
     if (e.message?.includes('not been triggered')) {
-      showToast('Will has not triggered yet — message is locked.', true);
+      showToast('Will has not triggered yet. Message is locked.', true);
     } else if (e.message?.includes('No message')) {
       showToast('No message stored in this contract.', true);
     } else {
