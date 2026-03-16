@@ -86,7 +86,7 @@ Deploy Will → Set Beneficiaries → Fund Vault → Send Heartbeats
 
 | Contract | Network | Address |
 |---|---|---|
-| `DotWillFactory` | Polkadot Hub TestNet | [`0x00Bc1Ff48812A45fe75385Ffb57e0284310B0F1c`](https://blockscout-testnet.polkadot.io/address/0x00Bc1Ff48812A45fe75385Ffb57e0284310B0F1c) |
+| `DotWillFactory` | Polkadot Hub TestNet | [`0x9D2fF9eEeF4E561969841849A06E87Ea4Eba68e6`](https://blockscout-testnet.polkadot.io/address/0x9D2fF9eEeF4E561969841849A06E87Ea4Eba68e6) |
 | `DotWillV2` (example) | Polkadot Hub TestNet | [`0xc4a3FAd2e79Bf5B50d1063697A5e8095Ccc829cb`](https://blockscout-testnet.polkadot.io/address/0xc4a3FAd2e79Bf5B50d1063697A5e8095Ccc829cb) |
 
 **Network details:**
